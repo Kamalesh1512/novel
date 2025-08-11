@@ -1,0 +1,317 @@
+// Define all available permissions
+export const PERMISSIONS = {
+  // Analytics
+  ANALYTICS_VIEW: "analytics:view",
+  ANALYTICS_EXPORT: "analytics:export",
+
+  // Admin Users Management
+  ADMIN_USERS_VIEW: "admin_users:view",
+  ADMIN_USERS_CREATE: "admin_users:create",
+  ADMIN_USERS_EDIT: "admin_users:edit",
+  ADMIN_USERS_DELETE: "admin_users:delete",
+  ADMIN_ROLES_MANAGE: "admin_roles:manage",
+
+  // Banners
+  BANNERS_VIEW: "banners:view",
+  BANNERS_CREATE: "banners:create",
+  BANNERS_EDIT: "banners:edit",
+  BANNERS_DELETE: "banners:delete",
+
+  // Categories
+  CATEGORIES_VIEW: "categories:view",
+  CATEGORIES_CREATE: "categories:create",
+  CATEGORIES_EDIT: "categories:edit",
+  CATEGORIES_DELETE: "categories:delete",
+
+  // Coupons
+  COUPONS_VIEW: "coupons:view",
+  COUPONS_CREATE: "coupons:create",
+  COUPONS_EDIT: "coupons:edit",
+  COUPONS_DELETE: "coupons:delete",
+
+  // Customers
+  CUSTOMERS_VIEW: "customers:view",
+  CUSTOMERS_EDIT: "customers:edit",
+  CUSTOMERS_DELETE: "customers:delete",
+  CUSTOMERS_EXPORT: "customers:export",
+
+  // Orders
+  ORDERS_VIEW: "orders:view",
+  ORDERS_EDIT: "orders:edit",
+  ORDERS_DELETE: "orders:delete",
+  ORDERS_FULFILL: "orders:fulfill",
+  ORDERS_REFUND: "orders:refund",
+
+  // Products
+  PRODUCTS_VIEW: "products:view",
+  PRODUCTS_CREATE: "products:create",
+  PRODUCTS_EDIT: "products:edit",
+  PRODUCTS_DELETE: "products:delete",
+  PRODUCTS_BULK_EDIT: "products:bulk_edit",
+
+  // Reviews
+  REVIEWS_VIEW: "reviews:view",
+  REVIEWS_MODERATE: "reviews:moderate",
+  REVIEWS_DELETE: "reviews:delete",
+  REVIEWS_REPLY: "reviews:reply",
+
+  // Settings
+  SETTINGS_VIEW: "settings:view",
+  SETTINGS_EDIT: "settings:edit",
+  SETTINGS_SYSTEM: "settings:system",
+
+  // System
+  // SYSTEM_LOGS_VIEW: "system_logs:view",
+} as const
+
+export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS]
+
+// Permission groups for easier management
+export const PERMISSION_GROUPS = {
+  Analytics: [
+    PERMISSIONS.ANALYTICS_VIEW,
+    PERMISSIONS.ANALYTICS_EXPORT,
+  ],
+  "Admin Management": [
+    PERMISSIONS.ADMIN_USERS_VIEW,
+    PERMISSIONS.ADMIN_USERS_CREATE,
+    PERMISSIONS.ADMIN_USERS_EDIT,
+    PERMISSIONS.ADMIN_USERS_DELETE,
+    PERMISSIONS.ADMIN_ROLES_MANAGE,
+  ],
+  Banners: [
+    PERMISSIONS.BANNERS_VIEW,
+    PERMISSIONS.BANNERS_CREATE,
+    PERMISSIONS.BANNERS_EDIT,
+    PERMISSIONS.BANNERS_DELETE,
+  ],
+  Categories: [
+    PERMISSIONS.CATEGORIES_VIEW,
+    PERMISSIONS.CATEGORIES_CREATE,
+    PERMISSIONS.CATEGORIES_EDIT,
+    PERMISSIONS.CATEGORIES_DELETE,
+  ],
+  Coupons: [
+    PERMISSIONS.COUPONS_VIEW,
+    PERMISSIONS.COUPONS_CREATE,
+    PERMISSIONS.COUPONS_EDIT,
+    PERMISSIONS.COUPONS_DELETE,
+  ],
+  Customers: [
+    PERMISSIONS.CUSTOMERS_VIEW,
+    PERMISSIONS.CUSTOMERS_EDIT,
+    PERMISSIONS.CUSTOMERS_DELETE,
+    PERMISSIONS.CUSTOMERS_EXPORT,
+  ],
+  Orders: [
+    PERMISSIONS.ORDERS_VIEW,
+    PERMISSIONS.ORDERS_EDIT,
+    PERMISSIONS.ORDERS_DELETE,
+    PERMISSIONS.ORDERS_FULFILL,
+    PERMISSIONS.ORDERS_REFUND,
+  ],
+  Products: [
+    PERMISSIONS.PRODUCTS_VIEW,
+    PERMISSIONS.PRODUCTS_CREATE,
+    PERMISSIONS.PRODUCTS_EDIT,
+    PERMISSIONS.PRODUCTS_DELETE,
+    PERMISSIONS.PRODUCTS_BULK_EDIT,
+  ],
+  Reviews: [
+    PERMISSIONS.REVIEWS_VIEW,
+    PERMISSIONS.REVIEWS_MODERATE,
+    PERMISSIONS.REVIEWS_DELETE,
+    PERMISSIONS.REVIEWS_REPLY,
+  ],
+  Settings: [
+    PERMISSIONS.SETTINGS_VIEW,
+    PERMISSIONS.SETTINGS_EDIT,
+    PERMISSIONS.SETTINGS_SYSTEM,
+  ],
+  // System: [
+  //   PERMISSIONS.SYSTEM_LOGS_VIEW,
+  // ],
+}
+
+// Default roles with production-ready permissions
+export const DEFAULT_ROLES = {
+  SUPER_ADMIN: {
+    name: "Super Admin",
+    description: "Full system access with administrative privileges",
+    permissions: Object.values(PERMISSIONS),
+  },
+  STORE_MANAGER: {
+    name: "Store Manager",
+    description: "Complete store operations management",
+    permissions: [
+      PERMISSIONS.ANALYTICS_VIEW,
+      PERMISSIONS.BANNERS_VIEW,
+      PERMISSIONS.BANNERS_CREATE,
+      PERMISSIONS.BANNERS_EDIT,
+      PERMISSIONS.CATEGORIES_VIEW,
+      PERMISSIONS.CATEGORIES_CREATE,
+      PERMISSIONS.CATEGORIES_EDIT,
+      PERMISSIONS.COUPONS_VIEW,
+      PERMISSIONS.COUPONS_CREATE,
+      PERMISSIONS.COUPONS_EDIT,
+      PERMISSIONS.CUSTOMERS_VIEW,
+      PERMISSIONS.CUSTOMERS_EDIT,
+      PERMISSIONS.CUSTOMERS_EXPORT,
+      PERMISSIONS.ORDERS_VIEW,
+      PERMISSIONS.ORDERS_EDIT,
+      PERMISSIONS.ORDERS_FULFILL,
+      PERMISSIONS.ORDERS_REFUND,
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.PRODUCTS_CREATE,
+      PERMISSIONS.PRODUCTS_EDIT,
+      PERMISSIONS.PRODUCTS_BULK_EDIT,
+      PERMISSIONS.REVIEWS_VIEW,
+      PERMISSIONS.REVIEWS_MODERATE,
+      PERMISSIONS.REVIEWS_REPLY,
+      PERMISSIONS.SETTINGS_VIEW,
+    ],
+  },
+  OPERATIONS_MANAGER: {
+    name: "Operations Manager",
+    description: "Order fulfillment and customer service operations",
+    permissions: [
+      PERMISSIONS.ANALYTICS_VIEW,
+      PERMISSIONS.CUSTOMERS_VIEW,
+      PERMISSIONS.CUSTOMERS_EDIT,
+      PERMISSIONS.ORDERS_VIEW,
+      PERMISSIONS.ORDERS_EDIT,
+      PERMISSIONS.ORDERS_FULFILL,
+      PERMISSIONS.ORDERS_REFUND,
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.REVIEWS_VIEW,
+      PERMISSIONS.REVIEWS_MODERATE,
+      PERMISSIONS.REVIEWS_REPLY,
+    ],
+  },
+  PRODUCT_MANAGER: {
+    name: "Product Manager",
+    description: "Product catalog and content management",
+    permissions: [
+      PERMISSIONS.ANALYTICS_VIEW,
+      PERMISSIONS.BANNERS_VIEW,
+      PERMISSIONS.BANNERS_CREATE,
+      PERMISSIONS.BANNERS_EDIT,
+      PERMISSIONS.CATEGORIES_VIEW,
+      PERMISSIONS.CATEGORIES_CREATE,
+      PERMISSIONS.CATEGORIES_EDIT,
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.PRODUCTS_CREATE,
+      PERMISSIONS.PRODUCTS_EDIT,
+      PERMISSIONS.PRODUCTS_BULK_EDIT,
+      PERMISSIONS.REVIEWS_VIEW,
+      PERMISSIONS.REVIEWS_MODERATE,
+    ],
+  },
+  MARKETING_MANAGER: {
+    name: "Marketing Manager",
+    description: "Marketing campaigns and promotional management",
+    permissions: [
+      PERMISSIONS.ANALYTICS_VIEW,
+      PERMISSIONS.ANALYTICS_EXPORT,
+      PERMISSIONS.BANNERS_VIEW,
+      PERMISSIONS.BANNERS_CREATE,
+      PERMISSIONS.BANNERS_EDIT,
+      PERMISSIONS.COUPONS_VIEW,
+      PERMISSIONS.COUPONS_CREATE,
+      PERMISSIONS.COUPONS_EDIT,
+      PERMISSIONS.CUSTOMERS_VIEW,
+      PERMISSIONS.CUSTOMERS_EXPORT,
+      PERMISSIONS.ORDERS_VIEW,
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.REVIEWS_VIEW,
+    ],
+  },
+  CUSTOMER_SERVICE: {
+    name: "Customer Service",
+    description: "Customer support and order assistance",
+    permissions: [
+      PERMISSIONS.CUSTOMERS_VIEW,
+      PERMISSIONS.CUSTOMERS_EDIT,
+      PERMISSIONS.ORDERS_VIEW,
+      PERMISSIONS.ORDERS_EDIT,
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.REVIEWS_VIEW,
+      PERMISSIONS.REVIEWS_REPLY,
+    ],
+  },
+  CONTENT_MODERATOR: {
+    name: "Content Moderator",
+    description: "Review and content moderation",
+    permissions: [
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.REVIEWS_VIEW,
+      PERMISSIONS.REVIEWS_MODERATE,
+      PERMISSIONS.REVIEWS_DELETE,
+      PERMISSIONS.REVIEWS_REPLY,
+    ],
+  },
+  ANALYST: {
+    name: "Data Analyst",
+    description: "Analytics and reporting access",
+    permissions: [
+      PERMISSIONS.ANALYTICS_VIEW,
+      PERMISSIONS.ANALYTICS_EXPORT,
+      PERMISSIONS.CUSTOMERS_VIEW,
+      PERMISSIONS.CUSTOMERS_EXPORT,
+      PERMISSIONS.ORDERS_VIEW,
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.REVIEWS_VIEW,
+    ],
+  },
+  INVENTORY_MANAGER: {
+    name: "Inventory Manager",
+    description: "Product inventory and stock management",
+    permissions: [
+      PERMISSIONS.ANALYTICS_VIEW,
+      PERMISSIONS.CATEGORIES_VIEW,
+      PERMISSIONS.ORDERS_VIEW,
+      PERMISSIONS.PRODUCTS_VIEW,
+      PERMISSIONS.PRODUCTS_CREATE,
+      PERMISSIONS.PRODUCTS_EDIT,
+      PERMISSIONS.PRODUCTS_BULK_EDIT,
+    ],
+  },
+}
+
+// Helper function to check if user has permission
+export function hasPermission(userPermissions: Permission[], requiredPermission: Permission): boolean {
+  return userPermissions.includes(requiredPermission)
+}
+
+// Helper function to check if user has any of the permissions
+export function hasAnyPermission(userPermissions: Permission[], requiredPermissions: Permission[]): boolean {
+  return requiredPermissions.some(permission => userPermissions.includes(permission))
+}
+
+// Helper function to get permissions for a role
+export function getRolePermissions(roleName: keyof typeof DEFAULT_ROLES): Permission[] {
+  return DEFAULT_ROLES[roleName].permissions
+}
+
+// Permission hierarchy - higher level permissions include lower level ones
+export const PERMISSION_HIERARCHY = {
+  [PERMISSIONS.PRODUCTS_DELETE]: [PERMISSIONS.PRODUCTS_VIEW, PERMISSIONS.PRODUCTS_EDIT],
+  [PERMISSIONS.PRODUCTS_EDIT]: [PERMISSIONS.PRODUCTS_VIEW],
+  [PERMISSIONS.PRODUCTS_BULK_EDIT]: [PERMISSIONS.PRODUCTS_VIEW, PERMISSIONS.PRODUCTS_EDIT],
+  [PERMISSIONS.ORDERS_DELETE]: [PERMISSIONS.ORDERS_VIEW, PERMISSIONS.ORDERS_EDIT],
+  [PERMISSIONS.ORDERS_EDIT]: [PERMISSIONS.ORDERS_VIEW],
+  [PERMISSIONS.ORDERS_REFUND]: [PERMISSIONS.ORDERS_VIEW, PERMISSIONS.ORDERS_EDIT],
+  [PERMISSIONS.CUSTOMERS_DELETE]: [PERMISSIONS.CUSTOMERS_VIEW, PERMISSIONS.CUSTOMERS_EDIT],
+  [PERMISSIONS.CUSTOMERS_EDIT]: [PERMISSIONS.CUSTOMERS_VIEW],
+  [PERMISSIONS.CATEGORIES_DELETE]: [PERMISSIONS.CATEGORIES_VIEW, PERMISSIONS.CATEGORIES_EDIT],
+  [PERMISSIONS.CATEGORIES_EDIT]: [PERMISSIONS.CATEGORIES_VIEW],
+  [PERMISSIONS.COUPONS_DELETE]: [PERMISSIONS.COUPONS_VIEW, PERMISSIONS.COUPONS_EDIT],
+  [PERMISSIONS.COUPONS_EDIT]: [PERMISSIONS.COUPONS_VIEW],
+  [PERMISSIONS.BANNERS_DELETE]: [PERMISSIONS.BANNERS_VIEW, PERMISSIONS.BANNERS_EDIT],
+  [PERMISSIONS.BANNERS_EDIT]: [PERMISSIONS.BANNERS_VIEW],
+  [PERMISSIONS.REVIEWS_DELETE]: [PERMISSIONS.REVIEWS_VIEW, PERMISSIONS.REVIEWS_MODERATE],
+  [PERMISSIONS.REVIEWS_MODERATE]: [PERMISSIONS.REVIEWS_VIEW],
+  [PERMISSIONS.SETTINGS_EDIT]: [PERMISSIONS.SETTINGS_VIEW],
+  [PERMISSIONS.ADMIN_USERS_DELETE]: [PERMISSIONS.ADMIN_USERS_VIEW, PERMISSIONS.ADMIN_USERS_EDIT],
+  [PERMISSIONS.ADMIN_USERS_EDIT]: [PERMISSIONS.ADMIN_USERS_VIEW],
+}

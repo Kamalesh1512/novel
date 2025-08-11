@@ -1,0 +1,17 @@
+# Dependency folders
+node_modules
+.next
+
+# Environment variables and configs
+.env
+
+# Git
+.git
+.gitignore
+
+# Docker and deployment files
+Dockerfile
+
+# Logs and OS files
+*.log
+*.DS_Store
