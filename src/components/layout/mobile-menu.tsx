@@ -17,14 +17,15 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-import { navItems, ProductType } from "@/lib/constants/types";
+import { NavItem, ProductType } from "@/lib/constants/types";
 import { NavigationItem } from "./header";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  navigation: navItems[];
+  navigation: NavItem[];
   modelIndex: number;
 }
 
@@ -34,6 +35,7 @@ export function MobileMenu({
   navigation,
   modelIndex,
 }: MobileMenuProps) {
+  const router = useRouter()
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const handleMouseEnter = (index: any) => {
@@ -74,15 +76,19 @@ export function MobileMenu({
               {/* Dropdown Menu */}
               {item.hasDropdown && item.items && activeDropdown === index && (
                 <div className="absolute top-full left-0 mt-0 w-64 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-                  <div className="py-2">
-                    {item.items.map((subItem, subIndex) => (
-                      <a
+                  <div className="py-3">
+                    {item.items?.map((subItem, subIndex) => (
+                      <Button
                         key={subIndex}
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-red-600 transition-colors duration-150"
+                        variant="ghost"
+                        className="w-full text-left block px-5 py-3 text-sm hover:bg-green-100 hover:text-green-600 transition-all duration-200 border-l-4 border-transparent hover:border-green-500"
+                        onClick={() => {
+                          router.push(subItem.href);
+                          setActiveDropdown(null);
+                        }}
                       >
-                        {subItem}
-                      </a>
+                        {subItem.title}
+                      </Button>
                     ))}
                   </div>
                 </div>
