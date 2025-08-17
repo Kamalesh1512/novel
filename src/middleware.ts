@@ -27,7 +27,7 @@ export async function middleware(req: NextRequest) {
   if (token && isProtectedRoute) {
     // Redirect admin users from /admin to /admin/analytics
     if (pathname === "/admin" || pathname === "/admin/") {
-      return NextResponse.redirect(new URL("/admin/analytics", req.url));
+      return NextResponse.redirect(new URL("/admin/products", req.url));
     }
 
     // Full access for super admin

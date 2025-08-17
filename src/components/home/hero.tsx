@@ -99,7 +99,7 @@ export default function HeroBannerCarousel() {
         }
       `}</style>
 
-      <div className="relative w-full overflow-visible">
+      <div className="relative w-full overflow-visible z-0">
         <Swiper
           className="hero-banner-carousel"
           modules={[Autoplay, Pagination]}
@@ -122,7 +122,7 @@ export default function HeroBannerCarousel() {
                   src={banner.imageUrl}
                   alt={banner.title}
                   fill
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-fit"
                   priority={index === 0}
                 />
               </div>

@@ -50,7 +50,7 @@ export default function SignInPage() {
         return;
       }
 
-      toast("Success", { description: "Welcome back to Alma!" });
+      toast("Success", { description: "Welcome back!" });
 
       // Fetch the updated session after sign-in
       const newSession = await getSession();
@@ -91,16 +91,15 @@ export default function SignInPage() {
             <div className="flex items-center justify-center">
               <Link href="/" className="flex items-center space-x-2">
                 <Image
-                  src={"/images/logo_novel.png"}
+                  src={"/Images/logo_novel.png"}
                   alt="Logo"
-                  content="object-cover"
-                  height={50}
-                  width={50}
+                  height={150}
+                  width={150}
                 />
               </Link>
             </div>
             <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-muted-foreground text-sm">
               Sign in to your account to continue
             </CardDescription>
           </CardHeader>

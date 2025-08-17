@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     eslint: {
     ignoreDuringBuilds: true,
   },
+  output:"standalone",
   images: { 
     unoptimized: true,
     domains: ['images.pexels.com']

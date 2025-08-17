@@ -24,8 +24,6 @@ import {
   Users,
 } from "lucide-react";
 
-
-
 export const userNavigation = [
   {
     name: "My Orders",
@@ -49,12 +47,6 @@ export const userNavigation = [
     href: "/payment-methods",
     icon: CreditCard,
   },
-  // {
-  //   name: "Notifications",
-  //   href: "/notifications",
-  //   icon: Bell,
-  //   badge: "3",
-  // },
   {
     name: "Settings",
     href: "/settings",
@@ -190,7 +182,8 @@ export interface ProductType {
   salePrice?: number;
   sku: string;
   stock: number;
-  size:JSON;
+  size: JSON;
+  sellers: string;
   categoryId: string;
   images: string[];
   modelUrl?: string;
@@ -205,26 +198,14 @@ export interface ProductType {
   category?: Category;
   rating?: number;
   reviews?: number;
-  features?: {
-    icon: IconType;
-    title: string;
-    desc: string;
-  }[];
+  features?: string[];
   notes?: {
     title: string;
     description: string;
   }[];
   weight?: number;
   productReviews?: ReviewType[];
-  personalisation: {
-    engraving: boolean;
-    maxInitials: number;
-    engravingPrice: number;
-    fonts: string[];
-    colors: string[];
-  };
 }
-
 
 export interface Category {
   id: string;
@@ -233,8 +214,6 @@ export interface Category {
   createdAt: Date;
   updatedAt: Date;
 }
-
-
 
 // Database categories enum
 export enum CategoryType {
@@ -347,14 +326,86 @@ export interface UserSettings {
 
 //admin nav
 export const adminNavigation = [
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  // { name: "Analytics", href: "/admin/analytics", icon: BarChart3 },
   { name: "Admin Users", href: "/admin/admin-users", icon: User },
   { name: "Banners", href: "/admin/banners", icon: LayoutDashboard },
   { name: "Categories", href: "/admin/categories", icon: Tag },
-  { name: "Coupons", href: "/admin/coupons", icon: Gift },
+  // { name: "Coupons", href: "/admin/coupons", icon: Gift },
   { name: "Customers", href: "/admin/customers", icon: Users },
-  { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  // { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
   { name: "Settings", href: "/admin/settings", icon: UserCog },
+];
+
+export interface NavSubItem {
+  title: string;
+  href: string;
+}
+
+export interface NavItem {
+  title: string;
+  hasDropdown: boolean;
+  items?: NavSubItem[];
+}
+
+export const navigationItems: NavItem[] = [
+  {
+    title: "Baby Care",
+    hasDropdown: true,
+    items: [
+      { title: "Baby Wipes", href: "/baby-care/baby-wipes" },
+      { title: "Baby Pants", href: "/baby-care/baby-pants" },
+      { title: "Baby Soaps", href: "/baby-care/baby-soaps" },
+      { title: "Baby Powder", href: "/baby-care/baby-powder" },
+    ],
+  },
+  {
+    title: "Outdoor Gear",
+    hasDropdown: true,
+    items: [
+      { title: "Strollers", href: "/outdoor-gear/strollers" },
+      { title: "Car Seats", href: "/outdoor-gear/car-seats" },
+      { title: "Carriers", href: "/outdoor-gear/carriers" },
+      { title: "Travel Accessories", href: "/outdoor-gear/travel-accessories" },
+    ],
+  },
+  {
+    title: "Indoor Gear",
+    hasDropdown: true,
+    items: [
+      { title: "Baby High Chairs", href: "/indoor-gear/baby-high-chairs" },
+      { title: "Swings", href: "/indoor-gear/swings" },
+      { title: "Baby Walkers", href: "/indoor-gear/baby-walkers" },
+    ],
+  },
+  {
+    title: "Nursing & Feeding Essentials",
+    hasDropdown: true,
+    items: [
+      { title: "Feeding Bottles", href: "/nursing-feeding/feeding-bottles" },
+      { title: "Baby Bibs", href: "/nursing-feeding/baby-bibs" },
+      { title: "Other Baby Essentials", href: "/nursing-feeding/other-essentials" },
+    ],
+  },
+  {
+    title: "Adult Care",
+    hasDropdown: true,
+    items: [
+      { title: "Underpads", href: "/adult-care/underpads" },
+      { title: "Adult Diapers", href: "/adult-care/adult-diapers" },
+      { title: "Body Wipes", href: "/adult-care/body-wipes" },
+    ],
+  },
+  {
+    title: "Personal Care",
+    hasDropdown: true,
+    items: [
+      { title: "Face Tissues", href: "/personal-care/face-tissues" },
+      { title: "Refreshing Wipes", href: "/personal-care/refreshing-wipes" },
+      { title: "Paper Napkins", href: "/personal-care/paper-napkins" },
+      { title: "Toilet Roll", href: "/personal-care/toilet-roll" },
+      { title: "Bath Soap", href: "/personal-care/bath-soap" },
+    ],
+  },
 ];

@@ -1,3 +1,4 @@
+'use client'
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -17,6 +18,7 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        premium:"bg-gradient-to-b from-[#9be15d] to-[#00a86b] text-[#1f1f1f] border border-[#008f5a] shadow-md hover:brightness-110",
       },
     },
     defaultVariants: {

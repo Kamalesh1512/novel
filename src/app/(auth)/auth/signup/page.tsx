@@ -157,18 +157,15 @@ export default function SignUpPage() {
             <div className="flex items-center justify-center">
               <Link href="/" className="flex items-center space-x-2">
                 <Image
-                  src={"/images/logo_with_horse.png"}
+                  src={"/images/logo_novel.png"}
                   alt="Logo"
                   content="object-cover"
-                  height={50}
-                  width={50}
+                  height={150}
+                  width={150}
                 />
               </Link>
             </div>
             <CardTitle className="text-2xl">Create your account</CardTitle>
-            <CardDescription>
-              Join Alma and discover premium cosmetics
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* OAuth Buttons */}
@@ -254,11 +251,11 @@ export default function SignUpPage() {
                 />
                 <Label htmlFor="terms">
                   I agree to the{" "}
-                  <Link href="/terms" className="text-black hover:underline">
+                  <Link href="/terms-conditions" className="text-black hover:underline">
                     Terms of Service
                   </Link>{" "}
                   &{" "}
-                  <Link href="/privacy" className="text-black hover:underline">
+                  <Link href="/privacy-policy" className="text-black hover:underline">
                     Privacy Policy
                   </Link>
                 </Label>

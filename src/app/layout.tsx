@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: "Novel - Babio Naturals",
     description: "Discover premium products with interactive 3D experiences.",
   },
-  icons: "/images/logo_novel.png",
+  icons: "/Images/logo_novel.png",
 };
 
 const michroma = Michroma({

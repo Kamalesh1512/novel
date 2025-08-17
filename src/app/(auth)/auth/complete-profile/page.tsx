@@ -59,7 +59,7 @@ export default function CompleteProfile() {
       });
 
       if (res.ok) {
-        router.push("/dashboard");
+        router.push("/home");
       } else {
         alert("Error saving phone number!");
       }
@@ -81,10 +81,11 @@ export default function CompleteProfile() {
             <div className="flex items-center justify-center">
               <Link href="/" className="flex items-center space-x-2">
                 <Image
-                  src="/images/logo_with_horse.png"
+                  src={"/images/logo_novel.png"}
                   alt="Logo"
-                  width={50}
-                  height={50}
+                  content="object-cover"
+                  height={150}
+                  width={150}
                 />
               </Link>
             </div>

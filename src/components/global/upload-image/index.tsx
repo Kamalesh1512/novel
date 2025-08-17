@@ -6,8 +6,6 @@ import { X } from "lucide-react"; // Icon for remove button
 import Image from "next/image";
 import { toast } from "sonner";
 import axios from "axios";
-import { Product } from "@/lib/constants/types";
-import { shallow } from "zustand/shallow";
 import { useProductStore } from "@/store/productStore";
 import { uploadToAzure } from "@/lib/utils/upload-to-azureblobstorage";
 

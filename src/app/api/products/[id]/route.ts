@@ -20,8 +20,6 @@ export async function GET(
         name: products.name,
         description: products.description,
         shortDescription: products.shortDescription,
-        price: products.price,
-        salePrice: products.salePrice,
         sku: products.sku,
         stock: products.stock,
         images: products.images,

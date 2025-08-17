@@ -2,18 +2,18 @@ version: '3.9'
 
 services:
   web:
-    container_name: alma_web
+    container_name: novel_web
     build:
       context: .
       dockerfile: src/docker/Dockerfile
-    image: kamalesh1512/alma:latest
+    image: kamalesh1512/novel:latest
     ports:
-      - "127.0.0.1:3000:3000" # bind to localhost for Nginx
+      - "127.0.0.1:3001:3000" # bind to localhost for Nginx
     restart: always
     environment:
       NODE_ENV: production
       NEXTAUTH_SECRET: XtHlYn1lUpw9c8Wc+yzCj7ft/9mkinUwI1pDyUM8F/M=
-      NEXTAUTH_URL: https://almaboss.in
+      NEXTAUTH_URL: https://baby-wipes.in
     env_file:
       - .env.production
     # command: ["npm", "run", "start"]

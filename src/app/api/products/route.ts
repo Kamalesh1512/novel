@@ -17,8 +17,6 @@ import {
 
 const sortableFields = {
   name: products.name,
-  price: products.price,
-  salePrice: products.salePrice,
   stock: products.stock,
   createdAt: products.createdAt,
   updatedAt: products.updatedAt,
@@ -51,8 +49,8 @@ export async function GET(request: NextRequest) {
 
     if (category) whereConditions.push(eq(products.categoryId, category));
     if (search) whereConditions.push(like(products.name, `%${search}%`));
-    if (minPrice) whereConditions.push(gte(products.price, minPrice));
-    if (maxPrice) whereConditions.push(lte(products.price, maxPrice));
+    // if (minPrice) whereConditions.push(gte(products.price, minPrice));
+    // if (maxPrice) whereConditions.push(lte(products.price, maxPrice));
     if (featured === "true") whereConditions.push(eq(products.featured, true));
 
     const sortBySafe = sortBy as SortableField;
@@ -66,9 +64,6 @@ export async function GET(request: NextRequest) {
         name: products.name,
         shortDescription: products.shortDescription,
         description: products.description,
-        gender:products.gender,
-        price: products.price,
-        salePrice: products.salePrice,
         images: products.images,
         modelUrl: products.modelUrl,
         stock: products.stock,
@@ -78,8 +73,6 @@ export async function GET(request: NextRequest) {
         sku: products.sku,
         createdAt: products.createdAt,
         updatedAt: products.updatedAt,
-        notes: products.notes,
-        personalisation:products.personalisation,
         category: {
           id: categories.id,
           name: categories.name,
@@ -103,9 +96,7 @@ export async function GET(request: NextRequest) {
 
     let result = resultRaw.map((product) => ({
       ...product,
-      notes: JSON.parse(product.notes || "[]"),
       images: JSON.parse(product.images || "[]"),
-      personalisation:JSON.parse(product.personalisation || "[]"),
       rating: product.rating ? Number(product.rating) : 0,
       reviews: Number(product.reviewCount),
     }));

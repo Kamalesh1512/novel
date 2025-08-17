@@ -40,7 +40,7 @@ const Footer = () => {
 
   return (
     <footer
-      className="bg-transparent text-white relative overflow-hidden"
+      className="bg-black text-white relative overflow-hidden"
     >
       {/* Background Lion Silhouette */}
       <div className="absolute right-0 top-0 h-full w-1/3 opacity-10">
@@ -64,10 +64,10 @@ const Footer = () => {
                 />
               </Link>
             </div>
-
+{/* 
             <p className="text-gray-300 mb-6 text-sm leading-relaxed">
               For Story Creators
-            </p>
+            </p> */}
           </div>
 
           {/* Company Links */}
@@ -78,7 +78,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-sm text-gray-300 hover:text-amber-400 transition-colors duration-200"
+                    className="text-sm text-gray-300 hover:text-green-400 transition-colors duration-200"
                   >
                     {link.name}
                   </a>
@@ -97,7 +97,7 @@ const Footer = () => {
                 <li key={link.name}>
                   <a
                     href={link.href}
-                    className="text-sm text-gray-300 hover:text-amber-400 transition-colors duration-200"
+                    className="text-sm text-gray-300 hover:text-green-400 transition-colors duration-200"
                   >
                     {link.name}
                   </a>
@@ -141,7 +141,7 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Your Email"
-                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-colors"
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-400 focus:ring-1 focus:ring-green-400 transition-colors"
               />
               <Button className="w-full" variant="premium">
                 SUBSCRIBE
@@ -155,7 +155,7 @@ const Footer = () => {
             {/* Copyright */}
             <div className="text-center md:text-right">
               <p className="text-sm text-gray-400">
-                COPYRIGHT © 2025 ALMA COSMETICS. ALL RIGHTS RESERVED.
+                COPYRIGHT © 2025 Novel tissues. ALL RIGHTS RESERVED.
               </p>
             </div>
           </div>

@@ -23,7 +23,7 @@ export function ImageCarousel({
   if (Array.isArray(images)) {
     parsedImages = images.flatMap((img) => {
       try {
-        const maybeParsed = JSON.parse(img); // will throw if not JSON
+        const maybeParsed = JSON.parse(img);
         return Array.isArray(maybeParsed) ? maybeParsed : [img];
       } catch {
         return [img]; // fallback if it's a direct URL string
