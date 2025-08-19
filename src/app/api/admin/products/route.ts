@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
         shortDescription: body.shortDescription,
         sku: body.sku,
         stock: body.stock,
-        sellers:JSON.stringify(body.sellers),
+        sellers:body.sellers,
         categoryId: body.categoryId,
         images: JSON.stringify(body.images),
         modelUrl: body.modelUrl,

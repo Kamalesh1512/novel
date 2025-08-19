@@ -264,7 +264,7 @@ export default function AdminProducts() {
                           <div className="flex space-x-2 mt-1">
                             {product.featured && (
                               <Badge variant="premium" className="text-xs">
-                                Crazy deal
+                                Steal deals
                               </Badge>
                             )}
                           </div>

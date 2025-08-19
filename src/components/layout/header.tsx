@@ -82,10 +82,6 @@ export function Header({ isHome }: HeaderProps) {
     }
   }, [status, router]);
 
-  if (status === "loading") {
-    return <LoadingScreen description="" />;
-  }
-
   if (!session?.user) {
     return null;
   }

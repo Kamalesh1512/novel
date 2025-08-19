@@ -75,7 +75,7 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   description: text("description"),
   shortDescription: text("short_description"),
-  sellers:json('sellers'),
+  sellers:json("sellers").$type<{ name: string; price: number }[]>(),
   size: json("size"),
   sku: text("sku").unique().notNull(),
   stock: integer("stock").default(0),

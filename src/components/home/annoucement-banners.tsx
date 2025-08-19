@@ -3,13 +3,15 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/autoplay';
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+import "swiper/css/autoplay";
 import { LoadingScreen } from "../global/loading";
 import { useRouter } from "next/navigation";
 
@@ -23,20 +25,24 @@ interface BannerProps {
   bannerType: string;
 }
 
-export default function Hero() {
+export default function AnnouncementBanner() {
   const [banners, setBanners] = useState<BannerProps[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBanners = async () => {
       try {
         const res = await fetch("/api/banners/active");
         const data = await res.json();
-        setBanners(data.banners || []);
+
+        // Filter banners with priority === 3
+        const filtered = (data.banners || []).filter(
+          (banner: BannerProps) => banner.priority === 3
+        );
+        setBanners(filtered);
       } catch (error) {
-        console.error('Error fetching banners:', error);
+        console.error("Error fetching announcement banners:", error);
       } finally {
         setLoading(false);
       }
@@ -44,10 +50,16 @@ export default function Hero() {
     fetchBanners();
   }, []);
 
+  const handleBannerClick = (linkUrl: string) => {
+    if (linkUrl) {
+      router.push(linkUrl);
+    }
+  };
+
   if (banners.length === 0) {
     return (
-      <div className="relative w-full h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-gray-500">No banners available</div>
+      <div className="relative w-full min-h-[120px] md:min-h-[150px] bg-transparent flex items-center justify-center">
+        <div className="text-gray-500">No announcement banners available</div>
       </div>
     );
   }
@@ -55,24 +67,24 @@ export default function Hero() {
   return (
     <>
       <style jsx global>{`
-        .hero-banner-carousel {
+        .announcement-banner {
           width: 100%;
           height: 100vh;
         }
-        
-        .hero-banner-carousel .swiper-slide {
+
+        .announcement-banner .swiper-slide {
           position: relative;
           width: 100%;
           height: 100%;
         }
-        
-        .hero-banner-carousel .swiper-pagination {
+
+        .announcement-banner .swiper-pagination {
           bottom: 12px !important;
           left: 50% !important;
           transform: translateX(-50%) !important;
         }
-        
-        .hero-banner-carousel .swiper-pagination-bullet {
+
+        .announcement-banner .swiper-pagination-bullet {
           width: 10px !important;
           height: 10px !important;
           background-color: #ffffff !important;
@@ -80,22 +92,22 @@ export default function Hero() {
           margin: 0 4px !important;
           transition: all 0.3s ease !important;
         }
-        
-        .hero-banner-carousel .swiper-pagination-bullet-active {
+
+        .announcement-banner .swiper-pagination-bullet-active {
           background-color: #000000 !important;
           opacity: 1 !important;
         }
-        
+
         @media (min-width: 640px) {
-          .hero-banner-carousel .swiper-pagination {
+          .announcement-banner .swiper-pagination {
             bottom: 24px !important;
           }
         }
       `}</style>
 
-      <div className="relative w-full overflow-visible z-0">
+      <div className="relative w-full overflow-hidden">
         <Swiper
-          className="hero-banner-carousel"
+          className="announcement-banner"
           modules={[Autoplay, Pagination]}
           slidesPerView={1}
           spaceBetween={0}
@@ -110,13 +122,17 @@ export default function Hero() {
           speed={1000}
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id} onClick={()=>router.push(banner.linkUrl)} className="cursor-pointer">
-              <div className="relative w-full h-screen">
+            <SwiperSlide
+              key={banner.id}
+              onClick={() => handleBannerClick(banner.linkUrl)}
+              className="cursor-pointer"
+            >
+              <div className="relative min-h-[320px] md:h-full bg-transparent">
                 <Image
                   src={banner.imageUrl}
                   alt={banner.title}
                   fill
-                  className="w-full h-full object-fit"
+                  className="w-full h-full object-cover object-center"
                   priority={index === 0}
                 />
               </div>

@@ -1,5 +1,5 @@
 "use client";
-import HeroBannerCarousel from "@/components/home/hero";
+import Hero from "@/components/home/hero";
 import { Header } from "@/components/layout/header";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -8,6 +8,11 @@ import { ProductType } from "@/lib/constants/types";
 import { LoadingScreen } from "@/components/global/loading";
 import { useProductStore } from "@/store/productStore";
 import TestimonialCarousel from "@/components/home/testimonials";
+import { FeaturedProducts } from "@/components/home/featured-products";
+import Categories from "@/components/home/categories";
+import TrustedByMothers from "@/components/home/trusted-by-mothers";
+import AnnouncementBanner from "@/components/home/annoucement-banners";
+import StealDeals from "@/components/home/steal-deals";
 
 export default function Home() {
   const { setProducts, getAllProducts } = useProductStore();
@@ -40,19 +45,24 @@ export default function Home() {
     fetchProducts();
   }, [setProducts]);
 
-  const products = useProductStore((state:any) => state.getAllProducts());
-  const bestSellers = products.filter((prod:any) => prod.bestSeller);
+  const products = useProductStore((state: any) => state.getAllProducts());
+  const bestSellers = products.filter((prod: any) => prod.bestSeller);
 
-    if (loading) {
-    return (
-      <LoadingScreen description=""/>
-    );
+  const stealDeals = products.filter((prod: any) => prod.featured);
+
+  if (loading) {
+    return <LoadingScreen description="" />;
   }
 
   return (
     <div className="relative overflow-x-hidden">
       <Header isHome={true} />
-      <HeroBannerCarousel />
+      <Hero />
+      <FeaturedProducts products={bestSellers} />
+      <Categories products={products} />
+      <TrustedByMothers />
+      {/* <AnnouncementBanner/> */}
+      <StealDeals products={stealDeals}/>
       <TestimonialCarousel />
       <Footer />
     </div>

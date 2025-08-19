@@ -71,6 +71,7 @@ export async function GET(request: NextRequest) {
         bestSeller: products.bestSeller,
         categoryId: products.categoryId,
         sku: products.sku,
+        sellers:products.sellers,
         createdAt: products.createdAt,
         updatedAt: products.updatedAt,
         category: {
@@ -99,6 +100,7 @@ export async function GET(request: NextRequest) {
       images: JSON.parse(product.images || "[]"),
       rating: product.rating ? Number(product.rating) : 0,
       reviews: Number(product.reviewCount),
+      sellers:product.sellers
     }));
 
     // Always include detailed reviews

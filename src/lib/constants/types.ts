@@ -168,6 +168,15 @@ export const categories: CategoryItem[] = [
     bgColor: "bg-gradient-to-br from-blue-900 to-slate-900",
     textColor: "text-white",
   },
+    {
+    id: "Personal-care",
+    title: "Personal Care",
+    banner: "/images/cat/premium/banner_2.png",
+    price: "₹599/-",
+    image: "/images/cat/perfumes.png",
+    bgColor: "bg-gradient-to-br from-blue-900 to-slate-900",
+    textColor: "text-white",
+  },
 ];
 
 type IconType = "clock" | "certificate" | "droplet" | "flag";
@@ -183,7 +192,7 @@ export interface ProductType {
   sku: string;
   stock: number;
   size: JSON;
-  sellers: string;
+  sellers: { name: string; url: string }[];
   categoryId: string;
   images: string[];
   modelUrl?: string;
@@ -409,3 +418,30 @@ export const navigationItems: NavItem[] = [
     ],
   },
 ];
+
+export const platformConfig = {
+    'amazon': { 
+      name: 'Amazon', 
+      color: '#FF9900', 
+      logo: '🛒',
+      bgGradient: 'from-orange-500 to-yellow-500' 
+    },
+    'flipkart': { 
+      name: 'Flipkart', 
+      color: '#2874F0', 
+      logo: '🛍️',
+      bgGradient: 'from-blue-500 to-blue-600' 
+    },
+    'meesho': { 
+      name: 'Meesho', 
+      color: '#FF1744', 
+      logo: '👗',
+      bgGradient: 'from-pink-500 to-red-500' 
+    },
+    // 'myntra': { 
+    //   name: 'Myntra', 
+    //   color: '#FF3F6C', 
+    //   logo: '✨',
+    //   bgGradient: 'from-pink-500 to-purple-500' 
+    // }
+  };

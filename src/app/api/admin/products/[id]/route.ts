@@ -62,7 +62,7 @@ export async function PUT(request: Request, { params }: productsAdminProps) {
         seoTitle,
         seoDescription,
         updatedAt: new Date(),
-        sellers:JSON.stringify(sellers)
+        sellers:sellers
       })
       .where(eq(products.id, id))
       .returning();
