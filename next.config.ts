@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   output:"standalone",
   images: { 
     unoptimized: true,
-    domains: ['images.pexels.com']
+    domains: ['images.pexels.com','novelstorageaccount.blob.core.windows.net',]
   },
 };
 

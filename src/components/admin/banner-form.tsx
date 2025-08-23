@@ -28,7 +28,7 @@ const bannerSchema = z.object({
   priority: z.number().int(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  bannerType: z.enum(["general", "festival", "sale", "announcement","home","premium-perfumes","perfumes","shower-gels"]),
+  bannerType: z.enum(["general", "festival", "sale", "announcement","home","baby-care","personal-care","adult-care" ,"product-specific"]),
   imageUrl: z.string().url({ message: "Image is required" }),
 });
 
@@ -160,12 +160,14 @@ export function BannerForm({ banner, onSuccess }: BannerFormProps) {
                 <SelectContent>
                   <SelectItem value="general">General</SelectItem>
                   <SelectItem value="home">Home Page</SelectItem>
-                  <SelectItem value="premium-perfumes">Premium Perfumes</SelectItem>
-                  <SelectItem value="perfumes">Perfumes</SelectItem>
-                  <SelectItem value="shower-gels">Shower-gels</SelectItem>
+                  <SelectItem value="baby-care">Baby Care</SelectItem>
+                  <SelectItem value="personal-care">Personal Care</SelectItem>
+                  <SelectItem value="adult-care">Adult Care</SelectItem>
                   <SelectItem value="festival">Festival</SelectItem>
                   <SelectItem value="sale">Sale</SelectItem>
                   <SelectItem value="announcement">Announcement</SelectItem>
+                  <SelectItem value="product-specific">Product Banner</SelectItem>
+
                 </SelectContent>
               </Select>
               <FormMessage />

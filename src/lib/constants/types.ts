@@ -26,26 +26,10 @@ import {
 
 export const userNavigation = [
   {
-    name: "My Orders",
-    href: "/my-orders",
-    icon: ShoppingBag,
-    badge: "2",
-  },
-  {
     name: "Wishlist",
     href: "/my-wishlist",
     icon: Heart,
     badge: "5",
-  },
-  {
-    name: "Addresses",
-    href: "/addresses",
-    icon: MapPin,
-  },
-  {
-    name: "Payment Methods",
-    href: "/payment-methods",
-    icon: CreditCard,
   },
   {
     name: "Settings",
@@ -87,55 +71,37 @@ export const quickActions = [
 ];
 
 export const testimonials = [
-  {
-    id: 1,
-    name: "Sarah Johnson",
-    avatar:
-      "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200",
-    rating: 4,
-    comment:
-      "The 3D product viewer is absolutely amazing! I could see every detail of the serum bottle before purchasing. The quality exceeded my expectations.",
-    product: "Radiance Renewal Serum",
-    location: "New York, NY",
-    handle: "@sarahjohnson",
-  },
-  {
-    id: 2,
-    name: "Emily Chen",
-    avatar:
-      "https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=200",
-    rating: 5,
-    comment:
-      "Alma has transformed my skincare routine. The products are luxurious and effective. I love how I can explore products in 3D before buying.",
-    product: "Velvet Rose Body Cream",
-    location: "Los Angeles, CA",
-    handle: "@emilychen",
-  },
-  {
-    id: 3,
-    name: "Maria Rodriguez",
-    avatar:
-      "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg?auto=compress&cs=tinysrgb&w=200",
-    rating: 3,
-    comment:
-      "The Midnight Bloom perfume is divine! The 3D experience helped me understand the bottle design perfectly. Fast shipping and beautiful packaging.",
-    product: "Midnight Bloom Perfume",
-    location: "Miami, FL",
-    handle: "@mariarodriguez",
-  },
-  {
-    id: 4,
-    name: "Jessica Wu",
-    avatar:
-      "https://images.pexels.com/photos/1130626/pexels-photo-1130626.jpeg?auto=compress&cs=tinysrgb&w=200",
-    rating: 4,
-    comment:
-      "Outstanding customer service and product quality. The interactive 3D models make online shopping feel like being in a luxury store.",
-    product: "Hydrating Face Mask",
-    location: "Seattle, WA",
-    handle: "jessicawu199",
-  },
-];
+    {
+      id: 1,
+      name: "Venture Solutions",
+      text: "I have been using uMake since its early conception and have enjoyed every minute of it. uMake allows me to take my ideas and turn them into concepts.",
+      rating: 5,
+    },
+    {
+      id: 2,
+      name: "Chris McMillan",
+      text: "I've been working with uMake for several years and it's progressed from a great tool to an awesome tool, so much more content than just even one year ago.",
+      rating: 5,
+    },
+    {
+      id: 3,
+      name: "Youssef",
+      text: "Awesome and easy to use, plus you can design whatever you want, from product mock-ups to houses interior and exterior design.",
+      rating: 4.5,
+    },
+    {
+      id: 5,
+      name: "Sarah Johnson",
+      text: "The customer service is exceptional and the product quality exceeds expectations every single time! Highly recommend to everyone.",
+      rating: 4,
+    },
+    {
+      id: 6,
+      name: "Michael Chen",
+      text: "Outstanding experience from start to finish. The attention to detail is what sets this brand apart from the competition.",
+      rating: 5,
+    },
+  ];
 
 export interface CategoryItem {
   id: string;
@@ -420,28 +386,28 @@ export const navigationItems: NavItem[] = [
 ];
 
 export const platformConfig = {
-    'amazon': { 
-      name: 'Amazon', 
-      color: '#FF9900', 
-      logo: '🛒',
-      bgGradient: 'from-orange-500 to-yellow-500' 
+    amazon: {
+      name: "Amazon",
+      logoSrc: "/Images/amazon_logo.svg",
     },
-    'flipkart': { 
-      name: 'Flipkart', 
-      color: '#2874F0', 
-      logo: '🛍️',
-      bgGradient: 'from-blue-500 to-blue-600' 
+    flipkart: {
+      name: "Flipkart",
+      logoSrc: "/Images/flipkart_logo.webp",
     },
-    'meesho': { 
-      name: 'Meesho', 
-      color: '#FF1744', 
-      logo: '👗',
-      bgGradient: 'from-pink-500 to-red-500' 
+    meesho: {
+      name: "Meesho",
+      logoSrc: "/Images/meesho_logo.png",
     },
-    // 'myntra': { 
-    //   name: 'Myntra', 
-    //   color: '#FF3F6C', 
-    //   logo: '✨',
-    //   bgGradient: 'from-pink-500 to-purple-500' 
-    // }
   };
+
+
+  export interface BannerProps {
+    id: string;
+    title: string;
+    description?: string;
+    imageUrl: string;
+    priority: number;
+    ctaText?: string;
+    ctaUrl?: string;
+    backgroundColor?: string;
+  }

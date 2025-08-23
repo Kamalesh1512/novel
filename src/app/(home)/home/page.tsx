@@ -7,12 +7,12 @@ import Footer from "@/components/layout/footer";
 import { ProductType } from "@/lib/constants/types";
 import { LoadingScreen } from "@/components/global/loading";
 import { useProductStore } from "@/store/productStore";
-import TestimonialCarousel from "@/components/home/testimonials";
 import { FeaturedProducts } from "@/components/home/featured-products";
 import Categories from "@/components/home/categories";
 import TrustedByMothers from "@/components/home/trusted-by-mothers";
 import AnnouncementBanner from "@/components/home/annoucement-banners";
 import StealDeals from "@/components/home/steal-deals";
+import Testimonials from "@/components/home/testimonials";
 
 export default function Home() {
   const { setProducts, getAllProducts } = useProductStore();
@@ -32,7 +32,6 @@ export default function Home() {
       if (!data.products || !Array.isArray(data.products)) {
         throw new Error("Invalid products data received");
       }
-
       setProducts(data.products);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -40,6 +39,7 @@ export default function Home() {
       setLoading(false);
     }
   };
+    
 
   useEffect(() => {
     fetchProducts();
@@ -49,6 +49,7 @@ export default function Home() {
   const bestSellers = products.filter((prod: any) => prod.bestSeller);
 
   const stealDeals = products.filter((prod: any) => prod.featured);
+
 
   if (loading) {
     return <LoadingScreen description="" />;
@@ -63,7 +64,7 @@ export default function Home() {
       <TrustedByMothers />
       {/* <AnnouncementBanner/> */}
       <StealDeals products={stealDeals}/>
-      <TestimonialCarousel />
+      <Testimonials/>
       <Footer />
     </div>
   );

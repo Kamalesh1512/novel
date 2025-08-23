@@ -19,7 +19,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-
 interface ProductCardProps {
   product: ProductType;
   index?: number;
@@ -39,7 +38,6 @@ const ProductCard = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
-
 
   const handleProductClick = () => {
     router.push(`/products/${product.sku}`);
@@ -61,12 +59,12 @@ const ProductCard = ({
         <div className="bg-transparent rounded-t-lg overflow-visible w-[200px] sm:w-[250px]">
           {/* Product Image Container */}
           <div className="relative bg-transparent rounded-t-lg h-[200px] sm:h-[220px] md:h-[220px] flex items-center justify-center overflow-visible">
-            {/* Bestseller Badge */}
-            <div className="absolute top-1 left-1 z-10">
-              <Badge className="bg-green-600 text-black px-2 py-0.5 rounded text-[10px] font-medium leading-none">
-                BESTSELLER
-              </Badge>
-            </div>
+            {/* Best Seller Badge */}
+            {product.bestSeller && (
+              <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10 shadow-md">
+                Best Seller
+              </div>
+            )}
             <div className="w-[180px] h-[180px] sm:w-[200px] sm:h-[200px] md:w-[220px] md:h-[220px] relative">
               <Image
                 src={productImage}
@@ -158,7 +156,7 @@ const ProductCard = ({
                 onClick={() => router.push(`/products/${product.sku}`)}
                 className="w-full"
               >
-                {homePage ? "ORDER NOW" : "ADD TO CART"}
+                {homePage ? "ORDER NOW" : "ORDER NOW"}
               </Button>
             </div>
           </div>

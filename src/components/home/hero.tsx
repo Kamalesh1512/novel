@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/pagination';
-import 'swiper/css/autoplay';
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/autoplay";
 import { LoadingScreen } from "../global/loading";
 import { useRouter } from "next/navigation";
 
@@ -27,16 +27,20 @@ export default function Hero() {
   const [banners, setBanners] = useState<BannerProps[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     const fetchBanners = async () => {
       try {
         const res = await fetch("/api/banners/active");
         const data = await res.json();
-        setBanners(data.banners || []);
+        const filteredBanners = (data.banners || []).filter(
+          (banner: BannerProps) => banner.priority === 1
+        );
+
+        setBanners(filteredBanners);
       } catch (error) {
-        console.error('Error fetching banners:', error);
+        console.error("Error fetching banners:", error);
       } finally {
         setLoading(false);
       }
@@ -59,19 +63,19 @@ export default function Hero() {
           width: 100%;
           height: 100vh;
         }
-        
+
         .hero-banner-carousel .swiper-slide {
           position: relative;
           width: 100%;
           height: 100%;
         }
-        
+
         .hero-banner-carousel .swiper-pagination {
           bottom: 12px !important;
           left: 50% !important;
           transform: translateX(-50%) !important;
         }
-        
+
         .hero-banner-carousel .swiper-pagination-bullet {
           width: 10px !important;
           height: 10px !important;
@@ -80,12 +84,12 @@ export default function Hero() {
           margin: 0 4px !important;
           transition: all 0.3s ease !important;
         }
-        
+
         .hero-banner-carousel .swiper-pagination-bullet-active {
           background-color: #000000 !important;
           opacity: 1 !important;
         }
-        
+
         @media (min-width: 640px) {
           .hero-banner-carousel .swiper-pagination {
             bottom: 24px !important;
@@ -110,7 +114,11 @@ export default function Hero() {
           speed={1000}
         >
           {banners.map((banner, index) => (
-            <SwiperSlide key={banner.id} onClick={()=>router.push(banner.linkUrl)} className="cursor-pointer">
+            <SwiperSlide
+              key={banner.id}
+              onClick={() => router.push(banner.linkUrl)}
+              className="cursor-pointer"
+            >
               <div className="relative w-full h-screen">
                 <Image
                   src={banner.imageUrl}

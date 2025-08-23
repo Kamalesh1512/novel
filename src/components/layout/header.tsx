@@ -33,12 +33,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import {
   adminNavigation,
+  Category,
   navigationItems,
   ProductType,
 } from "@/lib/constants/types";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LoadingScreen } from "../global/loading";
+import { useProductStore } from "@/store/productStore";
+import { SearchComponent } from "../search/main-search-component";
 
 export type NavigationItem = {
   title: string;
@@ -61,6 +64,16 @@ export function Header({ isHome }: HeaderProps) {
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  const { products } = useProductStore();
+
+  const categories: Category[] = Array.from(
+    new Map(
+      products
+        .filter((p) => p.category)
+        .map((p) => [p.category!.id, p.category!])
+    ).values()
+  );
 
   // Debug: Log dropdown state changes
   useEffect(() => {
@@ -99,6 +112,14 @@ export function Header({ isHome }: HeaderProps) {
     setActiveDropdown(null);
   };
 
+  const handleSearch = (searchData: any) => {
+    const searchParams = new URLSearchParams({
+      q: searchData.term,
+    });
+
+    router.push(`/products?${searchParams.toString()}`);
+    setIsSearchOpen(false); // Close mobile search if open
+  };
   // Animation variants
   const headerVariants = {
     initial: { y: -100, opacity: 0 },
@@ -182,28 +203,17 @@ export function Header({ isHome }: HeaderProps) {
                 />
               </Link>
             </motion.div>
-
-            {/* Search Bar */}
-            {/* Search + Middle Nav */}
             <div className="flex-1 max-w-2xl mx-8 hidden md:flex items-center space-x-6">
               {/* Search Bar */}
               <motion.div
-                className="relative flex-1"
+                className="relative flex-1 z-[100000]"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <motion.div
-                  className="absolute inset-y-0 left-0 flex items-center pl-4"
-                  whileHover={{ scale: 1.1, color: "#dc2626" }}
-                >
-                  <Search className="h-5 w-5 text-gray-400" />
-                </motion.div>
-                <Input
-                  type="text"
-                  placeholder="Search for products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-full bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent focus:bg-white transition-all duration-300"
+                <SearchComponent
+                  products={products}
+                  categories={categories}
+                  onSearch={handleSearch}
                 />
               </motion.div>
 

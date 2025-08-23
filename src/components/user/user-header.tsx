@@ -28,11 +28,36 @@ import {
 import { signOut, useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
 import { useState } from "react";
-import { userNavigation } from "@/lib/constants/types";
+import { Category, userNavigation } from "@/lib/constants/types";
+import { SearchComponent } from "../search/main-search-component";
+import { useProductStore } from "@/store/productStore";
 
 export function UserHeader() {
+  const { products } = useProductStore();
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
+
+  const categories: Category[] = Array.from(
+    new Map(
+      products
+        .filter((p) => p.category)
+        .map((p) => [p.category!.id, p.category!])
+    ).values()
+  );
+
+  // Handle search from header
+  const handleSearch = (searchData: any) => {
+    // Navigate to products page with search params
+    const searchParams = new URLSearchParams({
+      q: searchData.term,
+      // Add other filters if needed
+    });
+
+    router.push(`/products?${searchParams.toString()}`);
+    setIsSearchOpen(false);
+  };
 
   return (
     <header className="bg-black sticky top-0 z-50 w-full">
@@ -48,6 +73,14 @@ export function UserHeader() {
                 width={150}
               />
             </Link>
+            {/* Center: Search (Desktop) */}
+            <div className="hidden lg:flex flex-1 max-w-4xl mx-8">
+              <SearchComponent
+                products={products}
+                categories={categories}
+                onSearch={handleSearch}
+              />
+            </div>
           </div>
 
           {/* Right: Action Buttons */}
@@ -123,6 +156,18 @@ export function UserHeader() {
             </DropdownMenu>
           </div>
         </div>
+        {/* Mobile Search */}
+        {isSearchOpen && (
+          <div className="lg:hidden py-4 border-t border-gray-700 mt-3">
+            <div className="px-4 md:px-14">
+              <SearchComponent
+                products={products}
+                categories={categories}
+                onSearch={handleSearch}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
-import { Heart, Eye, ExternalLink, Timer, Star } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { ProductType } from "@/lib/constants/types";
-import { Button } from "../ui/button";
+"use client";
+import { platformConfig, ProductType } from "@/lib/constants/types";
+import { Heart } from "lucide-react";
+import { DealProductCard } from "../products/deal-product-card";
 import { SectionHeading } from "../ui/section-heading";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 interface Seller {
   name: string;
@@ -16,37 +18,105 @@ interface StealDealsProps {
 
 const StealDeals: React.FC<StealDealsProps> = ({ products = [] }) => {
   const [favorites, setFavorites] = useState(new Set<string>());
-  const [hovegreenCard, setHovegreenCard] = useState<number | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Platform configurations
-  const platformConfig = {
-    amazon: {
-      name: "Amazon",
-      logoSrc: "/Images/amazon_logo.png",
-    },
-    flipkart: {
-      name: "Flipkart",
-      logoSrc: "/Images/flipkart_logo.png",
-    },
-    meesho: {
-      name: "Meesho",
-      logoSrc: "/Images/meesho_logo.png",
-    },
-    // 'myntra': {
-    //   name: 'Myntra',
-    //   logoSrc: '/myntra_logo.png'
-    // }
-  };
-
-  const toggleFavorite = (productId: string) => {
-    const newFavorites = new Set(favorites);
-    if (newFavorites.has(productId)) {
-      newFavorites.delete(productId);
-    } else {
-      newFavorites.add(productId);
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/auth/signin");
     }
-    setFavorites(newFavorites);
+  }, [status, router]);
+
+  if (status === "loading") {
+    return <div className="p-8 text-center">Loading...</div>;
+  }
+
+  // ✅ Always declare hook at the top level
+  useEffect(() => {
+    const loadWishlist = async () => {
+      if (!session?.user?.id) return; // guard inside
+      try {
+        const response = await fetch(`/api/wishlist/${session.user.id}`);
+        if (response.ok) {
+          const wishlistItems = await response.json();
+          const wishlistProductIds = new Set<string>(
+            wishlistItems.map((item: any) => item.productId as string)
+          );
+          setFavorites(wishlistProductIds);
+        }
+      } catch (error) {
+        console.error("Failed to load wishlist:", error);
+      }
+    };
+
+    loadWishlist();
+  }, [session?.user?.id]);
+
+  // ✅ Now return null only after hooks are declared
+  if (!session?.user) {
+    return null;
+  }
+
+  const toggleFavorite = async (productId: string) => {
+    if (!session.user.id) {
+      // Redirect to login or show login modal
+      router.push("/auth/signin");
+      return;
+    }
+
+    setIsLoading(true);
+    const wasInFavorites = favorites.has(productId);
+
+    try {
+      if (wasInFavorites) {
+        // Remove from wishlist
+        const response = await fetch("/api/wishlist/remove", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: session.user.id,
+            productId,
+          }),
+        });
+
+        if (response.ok) {
+          const newFavorites = new Set(favorites);
+          newFavorites.delete(productId);
+          setFavorites(newFavorites);
+        } else {
+          throw new Error("Failed to remove from wishlist");
+        }
+      } else {
+        // Add to wishlist
+        const response = await fetch("/api/wishlist/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: session.user.id,
+            productId,
+          }),
+        });
+
+        if (response.ok) {
+          const newFavorites = new Set(favorites);
+          newFavorites.add(productId);
+          setFavorites(newFavorites);
+        } else {
+          throw new Error("Failed to add to wishlist");
+        }
+      }
+    } catch (error) {
+      console.error("Wishlist operation failed:", error);
+      // Optionally show a toast notification
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleProductClick = (sku: string) => {
@@ -60,13 +130,13 @@ const StealDeals: React.FC<StealDealsProps> = ({ products = [] }) => {
 
   if (!products.length) {
     return (
-      <section className="py-16 bg-gradient-to-br from-green-50 to-green-50">
+      <section className="py-8 md:py-16 bg-gradient-to-br from-green-50 to-green-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               Steal Deals
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm md:text-base text-gray-600">
               No deals available at the moment. Check back soon!
             </p>
           </div>
@@ -76,10 +146,10 @@ const StealDeals: React.FC<StealDealsProps> = ({ products = [] }) => {
   }
 
   return (
-    <section className="py-16 bg-transparent">
+    <section className="py-8 md:py-16 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-6 md:mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <SectionHeading
               title="STEAL DEALS"
@@ -91,160 +161,47 @@ const StealDeals: React.FC<StealDealsProps> = ({ products = [] }) => {
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product, index) => {
-            const sellers = product.sellers;
-
-            return (
-              <div
-                key={product.id}
-                className={`group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer ${
-                  hovegreenCard === index ? "scale-105" : ""
-                }`}
-                onMouseEnter={() => setHovegreenCard(index)}
-                onMouseLeave={() => setHovegreenCard(null)}
-                onClick={() => handleProductClick(product.sku)}
-              >
-                {/* Favorite Button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleFavorite(product.id);
-                  }}
-                  className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 shadow-lg"
-                >
-                  <Heart
-                    className={`w-5 h-5 transition-colors ${
-                      favorites.has(product.id)
-                        ? "fill-green-500 text-green-500"
-                        : "text-gray-400 hover:text-green-500"
-                    }`}
-                  />
-                </button>
-
-                {/* Best Seller Badge */}
-                {product.bestSeller && (
-                  <div className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold z-10 shadow-lg">
-                    Best Seller
-                  </div>
-                )}
-
-                {/* Product Image */}
-                <div className="relative h-64 overflow-hidden bg-gray-50">
-                  <img
-                    src={product.images[0] || "/api/placeholder/300/300"}
-                    alt={product.name}
-                    className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                  />
-                </div>
-
-                {/* Product Info */}
-                <div className="p-6">
-                  {/* Product Name and Rating */}
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-green-600 transition-colors flex-1 pr-2">
-                      {product.name}
-                    </h3>
-
-                    {/* Rating */}
-                    {/* {product.rating && (
-                      <div className="flex items-center gap-1 ml-2">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium text-gray-700">
-                          {product.rating}
-                        </span>
-                        {product.reviews && (
-                          <span className="text-xs text-gray-500">
-                            ({product.reviews})
-                          </span>
-                        )}
-                      </div>
-                    )} */}
-                  </div>
-
-                  {/* Short Description */}
-                  {product.shortDescription && (
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                      {product.shortDescription}
-                    </p>
-                  )}
-
-                  {/* Features */}
-                  {product.features && product.features.length > 0 && (
-                    <div className="mb-4">
-                      <div className="flex flex-wrap gap-1">
-                        {product.features.slice(0, 2).map((feature, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                        {product.features.length > 2 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
-                            +{product.features.length - 2} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Available Platforms */}
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-600 mb-2 font-medium">
-                      Available on:
-                    </p>
-                    <div className="flex flex-wrap gap-3">
-                      {sellers.map((seller, sellerIndex) => {
-                        const platformKey = seller.name.toLowerCase();
-                        const platform =
-                          platformConfig[
-                            platformKey as keyof typeof platformConfig
-                          ];
-
-                        if (!platform) return null;
-
-                        return (
-                          <Button
-                            key={sellerIndex}
-                            onClick={(e) => handleSellerClick(seller.url, e)}
-                            className="flex items-center justify-center w-20 h-20 p-2 bg-transparent transition-all duration-200 transform hover:scale-125"
-                            variant={"link"}
-                          >
-                            <img
-                              src={platform.logoSrc}
-                              alt={`${platform.name} logo`}
-                              className="object-contain"
-                            />
-                          </Button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Pulse animation for featured deals */}
-                {product.featured && (
-                  <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute inset-0 rounded-2xl bg-green-500/5 animate-pulse"></div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        {/* Products Grid - Desktop: Grid, Mobile: Horizontal Scroll */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 justify-center gap-4 md:pl-16">
+          {products.map((product, index) => (
+            <DealProductCard
+              key={product.id}
+              product={product}
+              index={index}
+              hoveredCard={hoveredCard}
+              setHoveredCard={setHoveredCard}
+              favorites={favorites}
+              toggleFavorite={toggleFavorite}
+              isLoading={isLoading}
+              handleProductClick={handleProductClick}
+              handleSellerClick={handleSellerClick}
+              platformConfig={platformConfig}
+            />
+          ))}
         </div>
 
-        {/* View All Button
-        <div className="text-center mt-12">
-          <button
-            onClick={() => router.push("/deals")}
-            className="bg-gradient-to-r from-green-500 to-green-500 hover:from-green-600 hover:to-green-600 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            View All Deals
-          </button>
-        </div> */}
+        {/* Mobile: Horizontal Scrolling */}
+        <div className="md:hidden">
+          <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 px-1">
+            {products.map((product, index) => (
+              <div key={product.id} className="flex-shrink-0 w-48">
+                <DealProductCard
+                  product={product}
+                  index={index}
+                  hoveredCard={hoveredCard}
+                  setHoveredCard={setHoveredCard}
+                  favorites={favorites}
+                  toggleFavorite={toggleFavorite}
+                  isLoading={isLoading}
+                  handleProductClick={handleProductClick}
+                  handleSellerClick={handleSellerClick}
+                  platformConfig={platformConfig}
+                  isMobile={true}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

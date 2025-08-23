@@ -146,7 +146,7 @@ function CategorySection({ title, products, index }: CategoryProps) {
     [0.9, 1, 1, 0.95]
   );
 
-  const displayProducts = products.slice(0, 3);
+  const displayProducts = products.slice(0, 4);
 
   return (
     <motion.section

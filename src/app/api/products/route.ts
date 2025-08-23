@@ -14,6 +14,7 @@ import {
   InferSelectModel,
   inArray,
 } from "drizzle-orm";
+import { features } from "process";
 
 const sortableFields = {
   name: products.name,
@@ -33,8 +34,7 @@ export type Review = InferSelectModel<typeof reviews> & {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "12");
+    const page = parseInt(searchParams.get("page") || "1")
     const category = searchParams.get("category");
     const search = searchParams.get("search");
     const minPrice = searchParams.get("minPrice");
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     const sortOrder = searchParams.get("sortOrder") || "desc";
     const featured = searchParams.get("featured");
 
-    const offset = (page - 1) * limit;
+    const offset = (page - 1) * 12;
 
     let whereConditions: any[] = [eq(products.published, true)];
 
@@ -74,6 +74,7 @@ export async function GET(request: NextRequest) {
         sellers:products.sellers,
         createdAt: products.createdAt,
         updatedAt: products.updatedAt,
+        features:products.features,
         category: {
           id: categories.id,
           name: categories.name,
@@ -92,7 +93,6 @@ export async function GET(request: NextRequest) {
       .where(and(...whereConditions))
       .groupBy(products.id, categories.id)
       .orderBy(orderBy)
-      .limit(limit)
       .offset(offset);
 
     let result = resultRaw.map((product) => ({
@@ -100,6 +100,7 @@ export async function GET(request: NextRequest) {
       images: JSON.parse(product.images || "[]"),
       rating: product.rating ? Number(product.rating) : 0,
       reviews: Number(product.reviewCount),
+      features:JSON.parse(product.features || '[]'),
       sellers:product.sellers
     }));
 
@@ -171,9 +172,9 @@ export async function GET(request: NextRequest) {
       products: result,
       pagination: {
         page,
-        limit,
+        limit:12,
         total: totalCount,
-        totalPages: Math.ceil(totalCount / limit),
+        totalPages: Math.ceil(totalCount / 12),
       },
     });
   } catch (error) {
