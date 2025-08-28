@@ -81,7 +81,7 @@ export default function CompleteProfile() {
             <div className="flex items-center justify-center">
               <Link href="/" className="flex items-center space-x-2">
                 <Image
-                  src={"/images/logo_novel.png"}
+                  src={"/Images/logo_novel.png"}
                   alt="Logo"
                   content="object-cover"
                   height={150}

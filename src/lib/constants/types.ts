@@ -71,37 +71,37 @@ export const quickActions = [
 ];
 
 export const testimonials = [
-    {
-      id: 1,
-      name: "Venture Solutions",
-      text: "I have been using uMake since its early conception and have enjoyed every minute of it. uMake allows me to take my ideas and turn them into concepts.",
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: "Chris McMillan",
-      text: "I've been working with uMake for several years and it's progressed from a great tool to an awesome tool, so much more content than just even one year ago.",
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: "Youssef",
-      text: "Awesome and easy to use, plus you can design whatever you want, from product mock-ups to houses interior and exterior design.",
-      rating: 4.5,
-    },
-    {
-      id: 5,
-      name: "Sarah Johnson",
-      text: "The customer service is exceptional and the product quality exceeds expectations every single time! Highly recommend to everyone.",
-      rating: 4,
-    },
-    {
-      id: 6,
-      name: "Michael Chen",
-      text: "Outstanding experience from start to finish. The attention to detail is what sets this brand apart from the competition.",
-      rating: 5,
-    },
-  ];
+  {
+    id: 1,
+    name: "Venture Solutions",
+    text: "I have been using uMake since its early conception and have enjoyed every minute of it. uMake allows me to take my ideas and turn them into concepts.",
+    rating: 5,
+  },
+  {
+    id: 2,
+    name: "Chris McMillan",
+    text: "I've been working with uMake for several years and it's progressed from a great tool to an awesome tool, so much more content than just even one year ago.",
+    rating: 5,
+  },
+  {
+    id: 3,
+    name: "Youssef",
+    text: "Awesome and easy to use, plus you can design whatever you want, from product mock-ups to houses interior and exterior design.",
+    rating: 4.5,
+  },
+  {
+    id: 5,
+    name: "Sarah Johnson",
+    text: "The customer service is exceptional and the product quality exceeds expectations every single time! Highly recommend to everyone.",
+    rating: 4,
+  },
+  {
+    id: 6,
+    name: "Michael Chen",
+    text: "Outstanding experience from start to finish. The attention to detail is what sets this brand apart from the competition.",
+    rating: 5,
+  },
+];
 
 export interface CategoryItem {
   id: string;
@@ -134,7 +134,7 @@ export const categories: CategoryItem[] = [
     bgColor: "bg-gradient-to-br from-blue-900 to-slate-900",
     textColor: "text-white",
   },
-    {
+  {
     id: "Personal-care",
     title: "Personal Care",
     banner: "/images/cat/premium/banner_2.png",
@@ -329,10 +329,10 @@ export const navigationItems: NavItem[] = [
     title: "Baby Care",
     hasDropdown: true,
     items: [
-      { title: "Baby Wipes", href: "/baby-care/baby-wipes" },
-      { title: "Baby Pants", href: "/baby-care/baby-pants" },
-      { title: "Baby Soaps", href: "/baby-care/baby-soaps" },
-      { title: "Baby Powder", href: "/baby-care/baby-powder" },
+      { title: "Baby Wipes", href: "/baby-care/babywipes" },
+      { title: "Baby Pants", href: "/baby-care/babypants" },
+      { title: "Baby Soaps", href: "/baby-care/babysoaps" },
+      { title: "Baby Powder", href: "/baby-care/babypowder" },
     ],
   },
   {
@@ -340,27 +340,30 @@ export const navigationItems: NavItem[] = [
     hasDropdown: true,
     items: [
       { title: "Strollers", href: "/outdoor-gear/strollers" },
-      { title: "Car Seats", href: "/outdoor-gear/car-seats" },
+      { title: "Car Seats", href: "/outdoor-gear/carseats" },
       { title: "Carriers", href: "/outdoor-gear/carriers" },
-      { title: "Travel Accessories", href: "/outdoor-gear/travel-accessories" },
+      { title: "Travel Accessories", href: "/outdoor-gear/travelaccessories" },
     ],
   },
   {
     title: "Indoor Gear",
     hasDropdown: true,
     items: [
-      { title: "Baby High Chairs", href: "/indoor-gear/baby-high-chairs" },
+      { title: "Baby High Chairs", href: "/indoor-gear/babyhighchairs" },
       { title: "Swings", href: "/indoor-gear/swings" },
-      { title: "Baby Walkers", href: "/indoor-gear/baby-walkers" },
+      { title: "Baby Walkers", href: "/indoor-gear/babywalkers" },
     ],
   },
   {
     title: "Nursing & Feeding Essentials",
     hasDropdown: true,
     items: [
-      { title: "Feeding Bottles", href: "/nursing-feeding/feeding-bottles" },
-      { title: "Baby Bibs", href: "/nursing-feeding/baby-bibs" },
-      { title: "Other Baby Essentials", href: "/nursing-feeding/other-essentials" },
+      { title: "Feeding Bottles", href: "/nursing-feeding/feedingbottles" },
+      { title: "Baby Bibs", href: "/nursing-feeding/babybibs" },
+      {
+        title: "Other Baby Essentials",
+        href: "/nursing-feeding/otheressentials",
+      },
     ],
   },
   {
@@ -368,46 +371,45 @@ export const navigationItems: NavItem[] = [
     hasDropdown: true,
     items: [
       { title: "Underpads", href: "/adult-care/underpads" },
-      { title: "Adult Diapers", href: "/adult-care/adult-diapers" },
-      { title: "Body Wipes", href: "/adult-care/body-wipes" },
+      { title: "Adult Diapers", href: "/adult-care/adultdiapers" },
+      { title: "Body Wipes", href: "/adult-care/bodywipes" },
     ],
   },
   {
     title: "Personal Care",
     hasDropdown: true,
     items: [
-      { title: "Face Tissues", href: "/personal-care/face-tissues" },
-      { title: "Refreshing Wipes", href: "/personal-care/refreshing-wipes" },
-      { title: "Paper Napkins", href: "/personal-care/paper-napkins" },
-      { title: "Toilet Roll", href: "/personal-care/toilet-roll" },
-      { title: "Bath Soap", href: "/personal-care/bath-soap" },
+      { title: "Face Tissues", href: "/personal-care/facetissues" },
+      { title: "Refreshing Wipes", href: "/personal-care/refreshingwipes" },
+      { title: "Paper Napkins", href: "/personal-care/papernapkins" },
+      { title: "Toilet Roll", href: "/personal-care/toiletroll" },
+      { title: "Bath Soap", href: "/personal-care/bathsoap" },
     ],
   },
 ];
 
 export const platformConfig = {
-    amazon: {
-      name: "Amazon",
-      logoSrc: "/Images/amazon_logo.svg",
-    },
-    flipkart: {
-      name: "Flipkart",
-      logoSrc: "/Images/flipkart_logo.webp",
-    },
-    meesho: {
-      name: "Meesho",
-      logoSrc: "/Images/meesho_logo.png",
-    },
-  };
+  amazon: {
+    name: "Amazon",
+    logoSrc: "/Images/amazon_logo.svg",
+  },
+  flipkart: {
+    name: "Flipkart",
+    logoSrc: "/Images/flipkart_logo.webp",
+  },
+  meesho: {
+    name: "Meesho",
+    logoSrc: "/Images/meesho_logo.png",
+  },
+};
 
-
-  export interface BannerProps {
-    id: string;
-    title: string;
-    description?: string;
-    imageUrl: string;
-    priority: number;
-    ctaText?: string;
-    ctaUrl?: string;
-    backgroundColor?: string;
-  }
+export interface BannerProps {
+  id: string;
+  title: string;
+  description?: string;
+  imageUrl: string;
+  priority: number;
+  ctaText?: string;
+  ctaUrl?: string;
+  backgroundColor?: string;
+}

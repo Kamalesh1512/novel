@@ -195,7 +195,7 @@ export function Header({ isHome }: HeaderProps) {
             >
               <Link href="/home" className="flex items-center">
                 <Image
-                  src="/images/logo_novel.png"
+                  src="/Images/logo_novel.png"
                   alt="Logo"
                   height={isScrolled || isHovered ? 150 : 150}
                   width={isScrolled || isHovered ? 150 : 150}
@@ -387,7 +387,7 @@ export function Header({ isHome }: HeaderProps) {
                           variant="ghost"
                           className="w-full text-left block px-5 py-3 text-sm hover:bg-green-100 hover:text-green-600 transition-all duration-200 border-l-4 border-transparent hover:border-green-500"
                           onClick={() => {
-                            router.push(subItem.href);
+                            router.push(`categories/${subItem.href}`);
                             setActiveDropdown(null);
                           }}
                         >

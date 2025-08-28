@@ -345,7 +345,7 @@ export default function AboutPage() {
                   >
                     <Link href="/home" className="flex items-center">
                       <Image
-                        src="/images/logo_novel.png"
+                        src="/Images/logo_novel.png"
                         alt="Logo"
                         height={isMobile ? 250 : 350}
                         width={isMobile ? 250 : 350}

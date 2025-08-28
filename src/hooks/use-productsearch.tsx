@@ -42,7 +42,7 @@ export const useProductSearch = (products: ProductType[] = [], categories: Categ
         !term ||
         product.name.toLowerCase().includes(term) ||
         product.description?.toLowerCase().includes(term) ||
-        product.category?.name?.toLowerCase().includes(term) || // safe with ?
+        product.category?.name?.toLowerCase().includes(term) ||
         product.tags?.some((tag) => tag.toLowerCase().includes(term));
 
       const matchesCategory =
