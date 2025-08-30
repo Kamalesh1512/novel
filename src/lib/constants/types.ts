@@ -10,6 +10,7 @@ import {
   HelpCircle,
   LayoutDashboard,
   MapPin,
+  Newspaper,
   Package,
   RotateCcw,
   Settings,
@@ -307,7 +308,7 @@ export const adminNavigation = [
   { name: "Categories", href: "/admin/categories", icon: Tag },
   // { name: "Coupons", href: "/admin/coupons", icon: Gift },
   { name: "Customers", href: "/admin/customers", icon: Users },
-  // { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { name: "Blogs", href: "/admin/blogs", icon: Newspaper },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
   { name: "Settings", href: "/admin/settings", icon: UserCog },
@@ -412,4 +413,21 @@ export interface BannerProps {
   ctaText?: string;
   ctaUrl?: string;
   backgroundColor?: string;
+}
+
+
+export interface Blog {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  status: string;
+  publishedAt: string | null;
+  createdAt: string;
+  viewCount: string;
+  featured: boolean;
+  author: {
+    name: string;
+    email: string;
+  };
 }

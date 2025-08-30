@@ -197,3 +197,74 @@ export const oauthTokens = pgTable("oauth_tokens", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
+
+
+// Blogs table
+export const blogs = pgTable("blogs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: text("title").notNull(),
+  slug: text("slug").unique().notNull(),
+  excerpt: text("excerpt"), // Short description for previews
+  content: text("content").notNull(), // Full blog content (supports HTML/Markdown)
+  featuredImage: text("featured_image"), // URL to the main blog image
+  tags: text("tags"), // JSON string of tags array
+  metaTitle: text("meta_title"), // SEO meta title
+  metaDescription: text("meta_description"), // SEO meta description
+  status: text("status").default("draft").notNull(), // draft, published, archived
+  publishedAt: timestamp("published_at"),
+  authorId: uuid("author_id").references(() => users.id).notNull(),
+  readTime: text("read_time"), // Estimated read time (e.g., "5 min read")
+  viewCount: text("view_count").default("0"), // Track blog views
+  featured: boolean("featured").default(false), // Mark as featured blog
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Blog categories table (optional - for better organization)
+export const blogCategories = pgTable("blog_categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  slug: text("slug").unique().notNull(),
+  description: text("description"),
+  color: text("color").default("#3B82F6"), // Hex color for category
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Blog-Category relationship table (many-to-many)
+export const blogCategoryRelations = pgTable("blog_category_relations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  blogId: uuid("blog_id").references(() => blogs.id, { onDelete: "cascade" }).notNull(),
+  categoryId: uuid("category_id").references(() => blogCategories.id, { onDelete: "cascade" }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Relations for Drizzle queries
+import { relations } from "drizzle-orm";
+
+export const blogsRelations = relations(blogs, ({ one, many }) => ({
+  author: one(users, {
+    fields: [blogs.authorId],
+    references: [users.id],
+  }),
+  categories: many(blogCategoryRelations),
+}));
+
+export const usersRelations = relations(users, ({ many }) => ({
+  blogs: many(blogs),
+}));
+
+export const blogCategoriesRelations = relations(blogCategories, ({ many }) => ({
+  blogs: many(blogCategoryRelations),
+}));
+
+export const blogCategoryRelationsRelations = relations(blogCategoryRelations, ({ one }) => ({
+  blog: one(blogs, {
+    fields: [blogCategoryRelations.blogId],
+    references: [blogs.id],
+  }),
+  category: one(blogCategories, {
+    fields: [blogCategoryRelations.categoryId],
+    references: [blogCategories.id],
+  }),
+}));

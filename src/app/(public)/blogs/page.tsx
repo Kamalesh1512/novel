@@ -1,9 +1,13 @@
-import React from 'react'
+import LoadingScreen from "@/components/global/loading";
+import BlogsList from "@/components/user/blogs-list";
+import { Suspense } from "react";
 
-const page = () => {
+export default async function Page() {
   return (
-    <div className='text-4xl text-red-800'>🚧 Page under development</div>
-  )
+    <Suspense fallback={<LoadingScreen description="" />}>
+      <div className="min-h-screen">
+        <BlogsList />
+      </div>
+    </Suspense>
+  );
 }
-
-export default page
