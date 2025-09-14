@@ -25,21 +25,21 @@ export const SectionHeading = ({
   }[align];
 
   const headingSize = {
-    sm: "text-xl lg:text-2xl",
-    md: "text-2xl lg:text-3xl",
+    sm: "text-xs lg:text-2xl",
+    md: "text-xl lg:text-3xl",
     lg: "text-3xl lg:text-4xl",
   }[size];
 
   return (
     <div className={`${alignment} my-8 ${className}`}>
       <h2
-        className={`${headingSize} font-bold text-black mb-2 ${fontStyle}`}
+        className={`${headingSize} font-bold text-green-700 mb-2 ${fontStyle}`}
         style={{ letterSpacing: letterSpacing }}
       >
         {title}
       </h2>
       {description && (
-        <p className="text-md lg:text-lg text-gray-700 max-w-2xl mx-auto">
+        <p className="text-[9px] md:text-lg text-gray-700 max-w-2xl">
           {description}
         </p>
       )}

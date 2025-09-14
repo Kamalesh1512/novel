@@ -13,6 +13,8 @@ import TrustedByMothers from "@/components/home/trusted-by-mothers";
 import AnnouncementBanner from "@/components/home/annoucement-banners";
 import StealDeals from "@/components/home/steal-deals";
 import Testimonials from "@/components/home/testimonials";
+import CategoriesGrid from "@/components/home/categories-grid";
+import LogoSlider from "@/components/home/sellers-logo-slider";
 
 export default function Home() {
   const { setProducts, getAllProducts } = useProductStore();
@@ -60,11 +62,13 @@ export default function Home() {
       <Header isHome={true} />
       <Hero />
       <FeaturedProducts products={bestSellers} />
-      <Categories products={products} />
+      {/* <Categories products={products} /> */}
+      <CategoriesGrid/>
       <TrustedByMothers />
       {/* <AnnouncementBanner/> */}
       <StealDeals products={stealDeals}/>
       <Testimonials/>
+      <LogoSlider/>
       <Footer />
     </div>
   );

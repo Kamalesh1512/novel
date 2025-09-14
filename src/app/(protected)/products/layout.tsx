@@ -36,12 +36,11 @@ export default function UserLayout({
 
   return (
     <div className="bg-transparent flex flex-col min-h-screen">
-      <UserHeader/>
       <div>
-        {/* Main content */}
-        <main className="flex-1 px-4 py-6 lg:px-8">{children}</main>
+        <Header isHome={false}/>
+        <main className="">{children}</main>
+        <Footer/>
       </div>
-      <Footer />
     </div>
 
   );

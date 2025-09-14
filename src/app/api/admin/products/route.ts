@@ -47,6 +47,8 @@ export async function POST(request: NextRequest) {
         name: body.name,
         description: body.description,
         shortDescription: body.shortDescription,
+        price:body.price,
+        salePrice:body.price,
         sku: body.sku,
         stock: body.stock,
         sellers:body.sellers,
@@ -60,6 +62,8 @@ export async function POST(request: NextRequest) {
         tags: JSON.stringify(body.tags),
         seoTitle: body.seoTitle,
         seoDescription: body.seoDescription,
+        faqs:body.faqs,
+        customerReviews:body.customerReviews
       })
       .returning();
 

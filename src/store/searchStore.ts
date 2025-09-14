@@ -58,7 +58,7 @@ interface SearchState {
 }
 
 const getEffectivePrice = (product: ProductType) => {
-  return  product.salePrice && product.salePrice > 0 ? product.salePrice : product.price;
+  return  product.salePrice && parseFloat(product.salePrice) > 0 ? parseFloat(product.salePrice) : parseFloat(product.price);
 };
 
 const defaultFilters: SearchFilters = {

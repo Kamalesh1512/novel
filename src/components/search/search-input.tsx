@@ -32,7 +32,7 @@ export const SearchInput = ({
           onChange={(e) => onChange(e.target.value)}
           onFocus={onFocus}
           placeholder={placeholder}
-          className="w-full h-12 pl-10 pr-10 border border-gray-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm"
+          className="w-full h-12 pl-10 pr-10 border border-gray-200 rounded-full bg-gray-200 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm"
           onKeyDown={(e) => {
             if (e.key === "Enter" && onEnter) {
               onEnter();

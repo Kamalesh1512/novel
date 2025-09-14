@@ -75,7 +75,12 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   description: text("description"),
   shortDescription: text("short_description"),
-  sellers:json("sellers").$type<{ name: string; price: number }[]>(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  salePrice: decimal("sale_price", { precision: 10, scale: 2 }),
+  sellers:
+    json("sellers").$type<
+      { name: string; price: number; variant: string; offer: string }[]
+    >(),
   size: json("size"),
   sku: text("sku").unique().notNull(),
   stock: integer("stock").default(0),
@@ -86,9 +91,20 @@ export const products = pgTable("products", {
   bestSeller: boolean("best_seller").default(false),
   published: boolean("published").default(true),
   features: text("features"),
+  faqs: json("faqs").$type<{ question: string; answer: string }[]>(),
+  customerReviews: json("customer_reviews").$type<{
+    sellerName: string;
+    totalReviews: number;
+    averageRating: number;
+    topComments?: {
+      comment: string;
+      rating: number;
+      reviewerName?: string;
+      date?: string;
+    }[];
+  }>(),
   tags: text("tags"),
   seoTitle: text("seo_title"),
-  variant: text("variant"),
   seoDescription: text("seo_description"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -102,18 +118,6 @@ export const wishlist = pgTable("wishlist", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Reviews table
-export const reviews = pgTable("reviews", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
-  productId: uuid("product_id").references(() => products.id),
-  rating: integer("rating").notNull(),
-  title: text("title"),
-  comment: text("comment"),
-  verified: boolean("verified").default(false),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
 
 //banners
 export const banners = pgTable("banners", {
@@ -198,7 +202,6 @@ export const oauthTokens = pgTable("oauth_tokens", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
 });
 
-
 // Blogs table
 export const blogs = pgTable("blogs", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -212,7 +215,9 @@ export const blogs = pgTable("blogs", {
   metaDescription: text("meta_description"), // SEO meta description
   status: text("status").default("draft").notNull(), // draft, published, archived
   publishedAt: timestamp("published_at"),
-  authorId: uuid("author_id").references(() => users.id).notNull(),
+  authorId: uuid("author_id")
+    .references(() => users.id)
+    .notNull(),
   readTime: text("read_time"), // Estimated read time (e.g., "5 min read")
   viewCount: text("view_count").default("0"), // Track blog views
   featured: boolean("featured").default(false), // Mark as featured blog
@@ -234,8 +239,12 @@ export const blogCategories = pgTable("blog_categories", {
 // Blog-Category relationship table (many-to-many)
 export const blogCategoryRelations = pgTable("blog_category_relations", {
   id: uuid("id").primaryKey().defaultRandom(),
-  blogId: uuid("blog_id").references(() => blogs.id, { onDelete: "cascade" }).notNull(),
-  categoryId: uuid("category_id").references(() => blogCategories.id, { onDelete: "cascade" }).notNull(),
+  blogId: uuid("blog_id")
+    .references(() => blogs.id, { onDelete: "cascade" })
+    .notNull(),
+  categoryId: uuid("category_id")
+    .references(() => blogCategories.id, { onDelete: "cascade" })
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -254,17 +263,23 @@ export const usersRelations = relations(users, ({ many }) => ({
   blogs: many(blogs),
 }));
 
-export const blogCategoriesRelations = relations(blogCategories, ({ many }) => ({
-  blogs: many(blogCategoryRelations),
-}));
+export const blogCategoriesRelations = relations(
+  blogCategories,
+  ({ many }) => ({
+    blogs: many(blogCategoryRelations),
+  })
+);
 
-export const blogCategoryRelationsRelations = relations(blogCategoryRelations, ({ one }) => ({
-  blog: one(blogs, {
-    fields: [blogCategoryRelations.blogId],
-    references: [blogs.id],
-  }),
-  category: one(blogCategories, {
-    fields: [blogCategoryRelations.categoryId],
-    references: [blogCategories.id],
-  }),
-}));
+export const blogCategoryRelationsRelations = relations(
+  blogCategoryRelations,
+  ({ one }) => ({
+    blog: one(blogs, {
+      fields: [blogCategoryRelations.blogId],
+      references: [blogs.id],
+    }),
+    category: one(blogCategories, {
+      fields: [blogCategoryRelations.categoryId],
+      references: [blogCategories.id],
+    }),
+  })
+);

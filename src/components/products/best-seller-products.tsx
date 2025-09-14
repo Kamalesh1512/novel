@@ -6,7 +6,6 @@ import { ProductType } from "@/lib/constants/types";
 import { Button } from "../ui/button";
 import ProductCard from "./product-card";
 
-
 interface BestsellersProps {
   baseProducts: ProductType[];
 }
@@ -64,31 +63,31 @@ const Bestsellers = ({ baseProducts }: BestsellersProps) => {
         {/* Carousel Container */}
         <div className="relative overflow-hidden">
           {/* Large padding on sides */}
-          <div className="px-40">
+          
+          <div className="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
             <div className="relative">
               {/* Navigation Arrows */}
-              <Button
+              <button
                 onClick={prevSlide}
                 disabled={currentIndex === 0}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 z-10 w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed p-0"
-                variant="outline"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 z-10 bg-transparent shadow-none border-none hover:bg-transparent disabled:opacity-50 disabled:cursor-default"
+                aria-label="Previous slide"
               >
-                <ChevronLeft className="w-6 h-6 text-black-600" />
-              </Button>
+                <ChevronLeft size={48} className="text-black" />
+              </button>
 
-              <Button
+              <button
                 onClick={nextSlide}
                 disabled={currentIndex >= maxIndex}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-10 w-12 h-12 rounded-full bg-white shadow-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed p-0"
-                variant="outline"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-10 bg-transparent shadow-none border-none hover:bg-transparent disabled:opacity-50 disabled:cursor-default"
               >
-                <ChevronRight className="w-6 h-6 text-black-600 font-bold" />
-              </Button>
+                <ChevronRight className="text-black" size={48}/>
+              </button>
 
               {/* Products Container */}
               <div className="overflow-hidden">
                 <div
-                  className="flex transition-transform duration-500 ease-in-out"
+                  className="flex transition-transform duration-500 ease-in-out gap-3 mb-3"
                   style={{
                     transform: `translateX(-${
                       currentIndex * (100 / itemsPerPage)
@@ -127,16 +126,13 @@ const Bestsellers = ({ baseProducts }: BestsellersProps) => {
       >
         <div className="flex px-4 min-w-max gap-3">
           {baseProducts.map((product, i) => (
-            <div
-                  key={`${product.id}-${i}`}
-                  className="relative"
-                >
-            <ProductCard
-              key={i}
-              product={product}
-              index={i}
-              className="w-1/2 flex-shrink-0"
-            />
+            <div key={`${product.id}-${i}`} className="relative">
+              <ProductCard
+                key={i}
+                product={product}
+                index={i}
+                className="flex-shrink-0"
+              />
             </div>
           ))}
         </div>

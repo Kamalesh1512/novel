@@ -219,3 +219,44 @@ nav, header {
   position: fixed;
   z-index: 9999;
 }
+
+@keyframes slide {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.logo-slider {
+  display: flex;
+  width: 200%; /* since we duplicate logos */
+}
+
+.logos-slide {
+  display: flex;
+  width: 50%; /* each half takes 50% */
+}
+
+.animate-slide {
+  animation: slide 15s linear infinite;
+}
+
+
+.intro-text,
+.dimensions-info {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.will-change.animate .intro-text,
+.will-change.animate .dimensions-info {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+:root {
+  --intro-text-transitions: 0.57s ease-out opacity, 0.57s ease-out transform;
+  --staggered-delay: 0.15;
+}

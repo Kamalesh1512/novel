@@ -147,19 +147,39 @@ export const categories: CategoryItem[] = [
 ];
 
 type IconType = "clock" | "certificate" | "droplet" | "flag";
-// types/deals.ts
+
+
+
+export interface ReviewCommentType {
+  comment: string;
+  rating: number;
+  reviewerName?: string;
+  date?: string;
+}
+
+export interface CustomerReviewsType {
+  sellerName: string;
+  totalReviews: number;
+  averageRating: number;
+  topComments?: ReviewCommentType[];
+}
+export interface faqs {
+  question:string
+  answer:string
+}
+
 export interface ProductType {
   id: string;
   name: string;
   description?: string;
   gender?: string;
   shortDescription?: string;
-  price: number;
-  salePrice?: number;
+  price: string;
+  salePrice?: string;
   sku: string;
   stock: number;
   size: JSON;
-  sellers: { name: string; url: string }[];
+  sellers: { name: string; url: string , variant: string; offer: string }[];
   categoryId: string;
   images: string[];
   modelUrl?: string;
@@ -172,15 +192,14 @@ export interface ProductType {
   createdAt: Date;
   updatedAt: Date;
   category?: Category;
-  rating?: number;
-  reviews?: number;
   features?: string[];
   notes?: {
     title: string;
     description: string;
   }[];
   weight?: number;
-  productReviews?: ReviewType[];
+  customerReviews: CustomerReviewsType[] | null;
+  faqs:faqs[]
 }
 
 export interface Category {
@@ -199,23 +218,6 @@ export enum CategoryType {
   MASCULINE = "masculine",
   FEMININE = "feminine",
   GIFT_SET = "gift-sets",
-}
-
-// types/review.ts
-export interface ReviewType {
-  id: string;
-  userId: string;
-  productId: string;
-  rating: number;
-  title?: string;
-  comment?: string;
-  verified: boolean;
-  createdAt: string;
-  updatedAt: string;
-  user?: {
-    name: string;
-    email: string;
-  };
 }
 
 // Types
@@ -327,6 +329,18 @@ export interface NavItem {
 
 export const navigationItems: NavItem[] = [
   {
+    title: "All Categories",
+    hasDropdown: true,
+    items: [
+      { title: "Baby Care", href: "/baby-care" },
+      { title: "Outdoor Gear", href: "/outdoor-gear" },
+      { title: "Indoor Gear", href: "/indoor-gear" },
+      { title: "Adult Care", href: "/adult-care" },
+      { title: "Personal Care", href: "/personal-care" },
+      { title: "Nursing & Feeding Essentials", href: "/nursing-feeding" },
+    ],
+  },
+  {
     title: "Baby Care",
     hasDropdown: true,
     items: [
@@ -414,7 +428,6 @@ export interface BannerProps {
   ctaUrl?: string;
   backgroundColor?: string;
 }
-
 
 export interface Blog {
   id: string;

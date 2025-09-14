@@ -118,7 +118,7 @@ export const SearchComponent = ({
   }, [searchHook.setSearchTerm]);
 
   return (
-    <div className="relative w-full h-12">
+    <div className="relative w-fit h-12 rounded-full border-gray-700">
       <SearchInput
         value={searchHook.searchTerm}
         onChange={searchHook.setSearchTerm}

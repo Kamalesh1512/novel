@@ -272,35 +272,7 @@ export default function ProductsPage() {
               </div>
             </div>
 
-            {/* Availability */}
-            {/* <div className="mb-6">
-              <h4 className="font-medium mb-3">Availability</h4>
-              <div className="space-y-2">
-                {[
-                  { value: "all", label: "All Products" },
-                  { value: "inStock", label: "In Stock" },
-                  { value: "outOfStock", label: "Out of Stock" },
-                  { value: "lowStock", label: "Low Stock" },
-                ].map((option) => (
-                  <label key={option.value} className="flex items-center">
-                    <input
-                      type="radio"
-                      name="availability"
-                      value={option.value}
-                      checked={availability === option.value}
-                      onChange={(e) =>
-                        handleFilterChange("availability", e.target.value)
-                      }
-                      className="mr-2"
-                    />
-                    {option.label}
-                  </label>
-                ))}
-              </div>
-            </div> */}
-
-            {/* Sort By */}
-            {/* Sort By */}
+            
             <div className="mb-6">
               <h4 className="font-medium mb-3">Sort By</h4>
               <DropdownMenu>

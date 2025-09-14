@@ -28,6 +28,8 @@ export async function PUT(request: Request, { params }: productsAdminProps) {
       name,
       description,
       shortDescription,
+      price,
+      salePrice,
       sku,
       stock,
       categoryId,
@@ -41,6 +43,8 @@ export async function PUT(request: Request, { params }: productsAdminProps) {
       seoTitle,
       seoDescription,
       sellers,
+      customerReviews,
+      faqs,
     } = body;
 
     const updatedProduct = await db
@@ -49,6 +53,8 @@ export async function PUT(request: Request, { params }: productsAdminProps) {
         name,
         description,
         shortDescription,
+        price,
+        salePrice,
         sku,
         stock,
         categoryId,
@@ -62,7 +68,9 @@ export async function PUT(request: Request, { params }: productsAdminProps) {
         seoTitle,
         seoDescription,
         updatedAt: new Date(),
-        sellers:sellers
+        sellers:sellers,
+        customerReviews:customerReviews,
+        faqs:faqs,
       })
       .where(eq(products.id, id))
       .returning();

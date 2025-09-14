@@ -227,7 +227,7 @@ export default function AdminProducts() {
                   Product
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
+                  SKU
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
@@ -271,19 +271,28 @@ export default function AdminProducts() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge
-                        variant={product.stock > 0 ? "default" : "destructive"}
-                      >
-                        {product.stock}
-                      </Badge>
+                    <td className="px-6 py-4">
+                      <div>
+                        {/* Best Seller Badge */}
+                        {product.sku && (
+                          <div className="text-black px-2 py-1 text-xs font-bold z-10">
+                            {product.sku}
+                          </div>
+                        )}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 space-x-1">
                       <Badge
                         variant={product.published ? "default" : "secondary"}
                       >
                         {product.published ? "Published" : "Draft"}
                       </Badge>
+                      {/* Best Seller Badge */}
+                      {product.bestSeller && (
+                        <Badge className="bg-green-500 text-white rounded-full text-xs">
+                          Best Seller
+                        </Badge>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">

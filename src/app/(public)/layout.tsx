@@ -14,7 +14,6 @@ export default async function PublicLayout({
   return (
     <div>
       <div>
-        {/* <UserHeader/> */}
         <Header isHome={false}/>
         <main className="">{children}</main>
         <Footer/>

@@ -1,3 +1,4 @@
+//products/[id]/page.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -24,6 +25,22 @@ import {
   Truck,
   RefreshCw,
   Share2,
+  ChevronDown,
+  ChevronUp,
+  ShoppingCart,
+  Leaf,
+  Baby,
+  Droplets,
+  TestTube,
+  Zap,
+  Users,
+  Clock,
+  Home,
+  Gift,
+  ShoppingBag,
+  Tag,
+  ExternalLink,
+  TestTube2,
 } from "lucide-react";
 import { trackProductView } from "@/hooks/use-recently-viewed";
 import LoadingScreen from "@/components/global/loading";
@@ -38,6 +55,76 @@ import { AnimatedCounter } from "@/components/global/interactive/animated-counte
 import ProductBanners from "@/components/products/product-banners";
 import RelatedProducts from "@/components/products/related-products";
 import ProductDescription from "@/components/products/product-description";
+import FAQs from "@/components/products/faqs";
+import { CustomerReviews } from "@/components/products/product-reviews";
+import YouMayAlsoLike from "@/components/products/you-may-also-like";
+import { Product3DModel } from "@/components/global/product-3d-model";
+import { Product3DModelAnimation } from "@/components/products/product-model-animation";
+
+// Icon mapping for features
+const getFeatureEmoji = (feature: string) => {
+  const lowerFeature = feature.toLowerCase();
+
+  if (
+    lowerFeature.includes("organic") ||
+    lowerFeature.includes("bamboo") ||
+    lowerFeature.includes("natural")
+  ) {
+    return "🌿";
+  }
+  if (
+    lowerFeature.includes("comfort") ||
+    lowerFeature.includes("soft") ||
+    lowerFeature.includes("ultra-soft")
+  ) {
+    return "❤️";
+  }
+  if (
+    lowerFeature.includes("test") ||
+    lowerFeature.includes("dermatolog") ||
+    lowerFeature.includes("paediatrician")
+  ) {
+    return "🧪";
+  }
+  if (lowerFeature.includes("vegan") || lowerFeature.includes("cruelty")) {
+    return "🙌";
+  }
+  if (lowerFeature.includes("baby") || lowerFeature.includes("infant")) {
+    return "👶";
+  }
+  if (
+    lowerFeature.includes("protein") ||
+    lowerFeature.includes("vitamin") ||
+    lowerFeature.includes("milk")
+  ) {
+    return "⚡";
+  }
+  if (
+    lowerFeature.includes("wash") ||
+    lowerFeature.includes("clean") ||
+    lowerFeature.includes("soap")
+  ) {
+    return "💧";
+  }
+  if (lowerFeature.includes("balanced") || lowerFeature.includes("ph")) {
+    return "🛡️";
+  }
+  if (lowerFeature.includes("free") || lowerFeature.includes("paraben")) {
+    return "🍃";
+  }
+  if (
+    lowerFeature.includes("quick") ||
+    lowerFeature.includes("fast") ||
+    lowerFeature.includes("instant")
+  ) {
+    return "⏱️";
+  }
+  if (lowerFeature.includes("home") || lowerFeature.includes("family")) {
+    return "🏠";
+  }
+  // Default emoji
+  return "✨";
+};
 
 export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -50,6 +137,14 @@ export default function ProductDetailPage() {
   const [backgroundGreen, setBackgroundGreen] = useState(false);
   const [banners, setBanners] = useState<BannerProps[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<ProductType[]>([]);
+  const [youMayAlsoLike, setYouMayAlsoLike] = useState<ProductType[]>([]);
+  const [expandedSellers, setExpandedSellers] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [selectedVariants, setSelectedVariants] = useState<{
+    [key: string]: string;
+  }>({});
+  const [hoveredSeller, setHoveredSeller] = useState<number | null>(null);
 
   const params = useParams();
   const sku = params.id as string;
@@ -58,6 +153,22 @@ export default function ProductDetailPage() {
   const { products } = useProductStore();
 
   const [product, setProduct] = useState<ProductType | null>(null);
+
+  const sellerVariants: {
+    [variant: string]: { name: string; url: string; offer: string }[];
+  } =
+    product?.sellers?.reduce((acc, seller) => {
+      if (!acc[seller.variant]) {
+        acc[seller.variant] = [];
+      }
+      acc[seller.variant].push({
+        name: seller.name,
+        url: seller.url,
+        offer: seller.offer,
+      });
+      return acc;
+    }, {} as { [variant: string]: { name: string; url: string; offer: string }[] }) ||
+    {};
 
   const fetchProductAndBanners = async () => {
     // Early return if prerequisites not met
@@ -104,8 +215,23 @@ export default function ProductDetailPage() {
           .slice(0, 8);
 
         setRelatedProducts(related);
+        // You May Also Like products: Looser match, e.g., only match category
+        const youMayAlsoLike = products
+          .filter((product) => {
+            if (product.sku === foundProduct.sku) return false;
+
+            const otherSkuParts = product.sku.split("-");
+            if (otherSkuParts.length < 4) return false;
+
+            // Match only category (more relaxed than related products)
+            return otherSkuParts[1] === category;
+          })
+          .slice(0, 8);
+
+        setYouMayAlsoLike(youMayAlsoLike);
       } else {
-        setRelatedProducts([]); // No related products if SKU format is unexpected
+        setRelatedProducts([]);
+        setYouMayAlsoLike([]);
       }
 
       // Fetch banners for this specific product
@@ -127,6 +253,7 @@ export default function ProductDetailPage() {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchProductAndBanners();
   }, [sku, products]);
@@ -194,6 +321,25 @@ export default function ProductDetailPage() {
       }
     }
   };
+
+  const toggleSellerExpansion = (sellerName: string) => {
+    setExpandedSellers((prev) => ({
+      ...prev,
+      [sellerName]: !prev[sellerName],
+    }));
+  };
+
+  const handleVariantSelect = (sellerName: string, variant: string) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [sellerName]: variant,
+    }));
+
+    // Here you would typically redirect to the actual product URL
+    // For now, we'll show a toast
+    toast.success(`Selected ${variant} from ${sellerName}`);
+  };
+
   const handleSellerClick = (url: string, event: any) => {
     event.stopPropagation();
     window.open(url, "_blank", "noopener,noreferrer");
@@ -236,100 +382,281 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Left Column - Images */}
           <div className="space-y-6 opacity-0 animate-[slideInLeft_0.8s_ease-out_0.2s_forwards]">
-            {/* View Mode Toggle */}
-            <div className="flex justify-center">
-              <ViewModeToggle
-                viewMode={viewMode}
-                hasModelUrl={!!product.modelUrl}
-                onViewModeChange={setViewMode}
-              />
-            </div>
+            {/* Image/3D Model Section */}
+            <div className="relative">
+              {/* View Mode Toggle */}
+              <div className="flex justify-center mb-6">
+                <ViewModeToggle
+                  viewMode={viewMode}
+                  hasModelUrl={!!product.modelUrl}
+                  onViewModeChange={setViewMode}
+                />
+              </div>
 
-            <ProductImageGallery
-              images={product.images}
-              productName={product.name}
-              selectedImage={selectedImage}
-              viewMode={viewMode}
-              onImageSelect={setSelectedImage}
-            />
+              {/* Content Container */}
+              <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-lg">
+                {viewMode === "image" ? (
+                  <ProductImageGallery
+                    images={product.images}
+                    productName={product.name}
+                    selectedImage={selectedImage}
+                    onImageSelect={setSelectedImage}
+                    viewMode="image"
+                    // className="min-h-[400px] md:min-h-[500px]"
+                  />
+                ) : (
+                  <div className="aspect-square w-full min-h-[400px] md:min-h-[500px]">
+                    <Product3DModel
+                      modelUrl={product.modelUrl || ""}
+                      className="w-full h-full"
+                      autoRotate={false}
+                      enableZoom={true}
+                      enablePan={false}
+                      isVisible={viewMode === "3d"} // Only active when in 3D mode
+                    />
+                  </div>
+                )}
+
+                {/* Loading overlay for mode switching */}
+                {viewMode === "3d" && product.modelUrl && (
+                  <div className="absolute top-4 left-4">
+                    <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs text-gray-600 font-medium">
+                      3D Interactive View
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Right Column - Product Details */}
           <div className="space-y-8 opacity-0 animate-[slideInRight_0.8s_ease-out_0.4s_forwards]">
             {/* Product Header */}
             <div className="space-y-4">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h1 className="text-4xl font-bold text-gray-900 leading-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text">
-                    {product.name}
-                  </h1>
-                  <p className="text-lg text-gray-600 mt-2">
-                    {product.shortDescription}
-                  </p>
-                </div>
+              <div className="flex items-center justify-between text-center">
+                <h1 className="text-2xl md:text-4xl font-bold text-gray-900 ">
+                  {product.name}
+                </h1>
               </div>
             </div>
 
-            {/* Features */}
-            <div className="space-y-4">
-              <h3 className="text-sm md:text-xl font-semibold text-gray-900">
-                Key Features
-              </h3>
+            {/* Key Features */}
+            <div className="space-y-8 text-center">
               {product.features && (
-                <AnimatedFeatures features={product.features} />
+                <div className="flex flex-col items-center space-y-6">
+                  {product.features
+                    .filter((feature: string) => feature.trim().startsWith("*"))
+                    .flatMap((feature: string) =>
+                      feature
+                        .substring(1)
+                        .split(",")
+                        .map((f) => f.trim())
+                    )
+                    .reduce(
+                      (rows: string[][], feature: string, index: number) => {
+                        // Pyramid shape logic
+                        const rowIndex = Math.floor(
+                          (Math.sqrt(8 * index + 1) - 1) / 2
+                        );
+                        if (!rows[rowIndex]) rows[rowIndex] = [];
+                        rows[rowIndex].push(feature);
+                        return rows;
+                      },
+                      []
+                    )
+                    .map((row: string[], rowIndex: number) => (
+                      <div key={rowIndex} className="flex justify-center gap-8">
+                        {row.map((featureItem: string, index: number) => (
+                          <div
+                            key={index}
+                            className="flex flex-row items-center space-y-2 p-4"
+                          >
+                            <div className="text-3xl">
+                              {getFeatureEmoji(featureItem)}
+                            </div>
+                            <span className="text-sm md:text-lg font-medium text-gray-700 text-center">
+                              {featureItem}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                </div>
               )}
             </div>
 
-            {/* Buy From Section */}
-            <div className="">
-              <p className="text-sm md:text-xl font-semibold text-gray-900">
-                Buy From:
-              </p>
+            <p className="text-lg text-gray-600 mt-2">
+              {product.shortDescription}
+            </p>
 
-              <div className="flex gap-3 items-start justify-start">
-                {product.sellers.map((seller, sellerIndex) => {
-                  const platformKey = seller.name.toLowerCase();
-                  const platform =
-                    platformConfig[platformKey as keyof typeof platformConfig];
-                  if (!platform) return null;
-
-                  return (
-                    <motion.div
-                      key={sellerIndex}
-                      whileHover={{ scale: 1.2, y: -3 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 15,
-                      }}
-                      className="relative"
-                    >
-                      <Button
-                        onClick={(e) => handleSellerClick(seller.url, e)}
-                        className="flex items-center justify-center bg-white rounded-xl shadow-md p-2 w-12 md:w-24 h-12 md:h-24 overflow-hidden hover:shadow-xl hover:ring-1 hover:ring-green-600 transition-all duration-300 mt-5"
-                        variant="link"
-                      >
-                        <img
-                          src={platform.logoSrc}
-                          alt={`${platform.name} logo`}
-                          className="object-contain w-full h-full"
-                        />
-                      </Button>
-
-                      {/* Optional floating tooltip */}
-                      <motion.span
-                        className="absolute -top-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 pointer-events-none"
-                        initial={{ opacity: 0, y: 5 }}
-                        whileHover={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        {platform.name}
-                      </motion.span>
-                    </motion.div>
-                  );
-                })}
+            {/* Shop Now Section with Variant Cards and Seller Accordions */}
+            <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-gray-50 to-white rounded-2xl shadow-xl">
+              {/* Header Section */}
+              <div className="flex flex-row items-center mb-8 space-x-3">
+                <div className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-r from-green-600 to-green-950 rounded-full mb-4 shadow-lg">
+                  <ShoppingBag className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg md:text-2xl font-bold text-gray-900 mb-2">
+                    Shop Now
+                  </h3>
+                  <p className="text-xs text-gray-600">
+                    Choose your variant and find the best deals
+                  </p>
+                </div>
               </div>
+
+              {/* Variant Selection */}
+              <div className="mb-8">
+                <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                  <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
+                  Available Variants
+                </h4>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {Object.keys(sellerVariants).map((variantName, index) => {
+                    const hasOffer = sellerVariants[variantName].some(
+                      (v) => v.offer && v.offer !== "None"
+                    );
+                    const offerText = sellerVariants[variantName]
+                      .map((v) => v.offer)
+                      .filter((offer) => offer && offer !== "None")[0];
+                    const isSelected =
+                      selectedVariants.selectedVariant === variantName;
+
+                    return (
+                      <div key={index} className="relative group">
+                        <Button
+                          variant={isSelected ? "premium" : "premiumOutline"}
+                          className="relative flex flex-col items-center justify-center p-4 h-24 w-full text-center overflow-hidden group-hover:ring-2 group-hover:ring-purple-300"
+                          onClick={() =>
+                            setSelectedVariants({
+                              selectedVariant: variantName,
+                            })
+                          }
+                        >
+                          {hasOffer && (
+                            <Badge
+                              variant="secondary"
+                              className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs px-2 py-1 shadow-lg animate-pulse z-10"
+                            >
+                              <Tag className="w-3 h-3 mr-1" />
+                              {offerText}
+                            </Badge>
+                          )}
+
+                          <h4
+                            className={`font-semibold transition-colors ${
+                              isSelected ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {variantName}
+                          </h4>
+                          <div
+                            className={`text-sm mt-1 ${
+                              isSelected ? "text-purple-100" : "text-gray-500"
+                            }`}
+                          >
+                            {sellerVariants[variantName].length} seller
+                            {sellerVariants[variantName].length > 1 ? "s" : ""}
+                          </div>
+                        </Button>
+
+                        {/* Selection indicator */}
+                        {isSelected && (
+                          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                            <div className="w-3 h-3 bg-purple-600 rotate-45 shadow-lg"></div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Seller Selection */}
+              {selectedVariants.selectedVariant && (
+                <div className="animate-in slide-in-from-bottom duration-500">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <ExternalLink className="w-5 h-5 mr-2 text-blue-600" />
+                    Available on {selectedVariants.selectedVariant}
+                  </h4>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {sellerVariants[selectedVariants.selectedVariant]?.map(
+                      (seller, idx) => {
+                        const platformKey = seller.name.toLowerCase();
+                        const platform =
+                          platformConfig[
+                            platformKey as keyof typeof platformConfig
+                          ];
+                        if (!platform) return null;
+
+                        const hasOffer =
+                          seller.offer && seller.offer !== "None";
+
+                        return (
+                          <div
+                            key={idx}
+                            className="relative group"
+                            onMouseEnter={() => setHoveredSeller(idx)}
+                            onMouseLeave={() => setHoveredSeller(null)}
+                          >
+                            <Button
+                              variant="link"
+                              onClick={(e) => handleSellerClick(seller.url, e)}
+                              className="relative flex flex-col items-center justify-center bg-white rounded-2xl shadow-lg p-2 w-fit h-fit overflow-hidden group-hover:shadow-2xl group-hover:ring-2 group-hover:ring-blue-400 transform transition-all duration-300 group-hover:scale-105"
+                            >
+                              {/* Gradient overlay */}
+                              <div
+                                className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                              ></div>
+
+                              {/* Platform logo */}
+                              <div className="relative z-10 w-16 h-16 mb-2 transition-transform duration-300 group-hover:scale-110">
+                                <img
+                                  src={platform.logoSrc}
+                                  alt={`${platform.name} logo`}
+                                  className="object-contain w-full h-full filter group-hover:brightness-110"
+                                />
+                              </div>
+                              {/* Hover effect indicator */}
+                              <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-400 rounded-2xl transition-colors duration-300"></div>
+                            </Button>
+
+                            {/* Offer badge */}
+                            {hasOffer && (
+                              <div className="absolute -top-2 -right-2 z-20">
+                                <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs px-2 py-1 shadow-lg animate-bounce">
+                                  {seller.offer}
+                                </Badge>
+                              </div>
+                            )}
+
+                            {/* Hover tooltip */}
+                            {hoveredSeller === idx && (
+                              <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 z-30">
+                                <div className="bg-gray-900 text-white px-3 py-1 rounded-lg text-sm whitespace-nowrap shadow-xl">
+                                  Shop on {platform.name}
+                                  <div className="absolute top-full left-1/2 transform -translate-x-1/2">
+                                    <div className="w-2 h-2 bg-gray-900 rotate-45 -mt-1"></div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+
+                  {/* Call to action */}
+                  <div className="mt-8 text-center">
+                    <p className="text-gray-600 mb-4">
+                      Find the best deals across all platforms
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
@@ -352,16 +679,38 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </div>
+
       {/* Product Description Section */}
       {product.description && (
         <ProductDescription
           description={product.description}
           productName={product.name}
           features={product.features}
-          banners = {banners}
+          banners={banners}
         />
       )}
 
+      <Product3DModelAnimation
+        modelUrl={product.modelUrl || ""}
+        fallbackImage={product.images[0] || ""}
+        productName={product.name}
+        features={product.features!}
+        dimensions={{
+          width: '15.2 cm (6")',
+          height: '10.8 cm (4.25")',
+        }}
+        className="w-full h-96"
+        autoRotate={false}
+        altText="Your product 3D model"
+      />
+
+      <FAQs faqs={product.faqs} />
+
+      {product.customerReviews && (
+        <CustomerReviews customerReviews={product.customerReviews} />
+      )}
+
+      <YouMayAlsoLike products={youMayAlsoLike} />
 
       {/* Related Products Section */}
       <RelatedProducts relatedProducts={relatedProducts} />

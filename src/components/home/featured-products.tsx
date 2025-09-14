@@ -36,74 +36,40 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
     }).format(price);
   };
 
-
   return (
-    <section className="container mx-auto md:pl-16">
-      <div className="">
-        <SectionHeading
-          title="BESTSELLERS"
-          fontStyle="font-bebas"
-          align="center"
-          size="lg"
-          letterSpacing="2px"
-        />
+    <section className="w-full relative">
+      {/* Carousel Container */}
+      <div className="relative overflow-hidden">
+        {/* Large padding on sides */}
 
-        <Bestsellers baseProducts={products} />
+        <div className="flex flex-row items-center max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
+          <div className="flex-1 text-green-700">
+            <SectionHeading
+              title="Our Bestsellers"
+              fontStyle="font-sans"
+              align="left"
+              size="md"
+              description="Shop top-selling Babio baby care essentials. Trusted by
+            moms, our bestsellers provide natural, gentle care for your little
+            one."
+            />
+          </div>
 
-        <div className="flex items-center justify-center">
-          <style jsx>{`
-            @keyframes wave {
-              0%,
-              100% {
-                transform: translateX(0) scaleY(1);
-              }
-              25% {
-                transform: translateX(-2px) scaleY(0.95);
-              }
-              50% {
-                transform: translateX(2px) scaleY(1.05);
-              }
-              75% {
-                transform: translateX(-1px) scaleY(0.98);
-              }
-            }
+          <div className="flex-shrink-0">
+            <Button
+              variant="outline"
+              size="lg"
+              className="text-green-600 border border-green-500 hover:bg-green-600"
+              asChild
+            >
+              <Link href="/products">View All</Link>
+            </Button>
+          </div>
+        </div>
 
-            @keyframes ripple {
-              0% {
-                transform: scale(1) rotate(0deg);
-                opacity: 0.3;
-              }
-              50% {
-                transform: scale(1.1) rotate(180deg);
-                opacity: 0.1;
-              }
-              100% {
-                transform: scale(1) rotate(360deg);
-                opacity: 0.3;
-              }
-            }
-
-            .water-effect::before {
-              animation: wave 2s ease-in-out infinite;
-            }
-
-            .water-effect::after {
-              animation: ripple 3s ease-in-out infinite;
-            }
-          `}</style>
-          <Button
-            variant="ghost"
-            size="lg"
-            className="mt-5 water-effect relative overflow-hidden border border-green-500 text-black hover:text-black transition-colors duration-300 bg-transparent z-10
-before:content-[''] before:absolute before:inset-0 before:bg-green-500 before:z-[-1] before:origin-bottom
-before:scale-y-0 hover:before:scale-y-100 before:transition-transform before:duration-500 before:ease-in-out
-after:content-[''] after:absolute after:inset-0 after:z-[-1] after:origin-bottom after:scale-y-0 
-hover:after:scale-y-100 after:transition-transform after:duration-500 after:ease-in-out after:delay-75
-after:bg-gradient-to-b after:from-[#4eec56] after:to-[#56f030]"
-            asChild
-          >
-            <Link href="/products">View All</Link>
-          </Button>
+        {/* Products Carousel */}
+        <div className="mt-6">
+          <Bestsellers baseProducts={products} />
         </div>
       </div>
     </section>
