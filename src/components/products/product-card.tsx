@@ -55,6 +55,7 @@ const ProductCard = ({
       : null;
 
   console.log(product);
+  const firstSellerReview = product.customerReviews?.[0];
 
   return (
     <div className={`flex-shrink-0 ${className}`}>
@@ -63,14 +64,14 @@ const ProductCard = ({
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: index * 0.1 }}
         viewport={{ once: true }}
-        className="flex flex-col rounded-2xl w-[200px] sm:w-[250px] md:w-[275px] bg-white shadow-lg relative cursor-pointer h-[420px]"
+        className="flex flex-col rounded-2xl w-[200px] sm:w-[250px] md:w-[250px] shadow-lg relative cursor-pointer h-[420px]"
         onClick={() => router.push(`/products/${product.sku}`)}
       >
         {/* Image Container: Fixed Height */}
         <div className="relative h-[200px] flex items-center justify-center overflow-hidden rounded-t-2xl bg-transparent">
-          {product.bestSeller && (
-            <div className="absolute top-3 left-3 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold z-10 shadow-md">
-              Best Seller
+          {discountPercentage && discountPercentage > 0 && (
+            <div className="absolute top-3 left-3 z-10 bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-bold shadow-md">
+              {discountPercentage}% OFF
             </div>
           )}
           <Image
@@ -87,10 +88,10 @@ const ProductCard = ({
         </div>
 
         {/* Product Info: Remaining Space */}
-        <div className="flex flex-col justify-between p-4 bg-gray-100 rounded-b-2xl h-[220px]">
-          <div className="flex-1 space-y-2 overflow-hidden">
+        <div className="flex flex-col justify-between rounded-b-lg bg-gray-100 h-[230px]">
+          <div className="flex-1 space-y-2 py-2 px-2 overflow-hidden">
             <div className="text-xs text-gray-600 uppercase tracking-wide truncate">
-              {product.category?.name || "EAU DE PARFUM"}
+              {product.category?.name || ""}
             </div>
 
             <h3 className="text-gray-900 text-sm font-semibold leading-tight line-clamp-2">
@@ -101,13 +102,9 @@ const ProductCard = ({
                 {product.name}
               </Link>
             </h3>
-
             <div className="flex items-center gap-2 flex-wrap">
               {product.salePrice && parseFloat(product.salePrice) > 0 ? (
                 <>
-                  <span className="font-bold text-green-600 text-base">
-                    ₹{product.salePrice}
-                  </span>
                   {product.price &&
                     parseFloat(product.price) >
                       parseFloat(product.salePrice) && (
@@ -115,11 +112,9 @@ const ProductCard = ({
                         ₹{product.price}
                       </span>
                     )}
-                  {discountPercentage && discountPercentage > 0 && (
-                    <div className="bg-red-500 text-white px-1.5 py-0.5 rounded-full text-xs font-bold shadow-md">
-                      {discountPercentage}% OFF
-                    </div>
-                  )}
+                  <span className="font-bold text-green-600 text-base">
+                    ₹{product.salePrice}
+                  </span>
                 </>
               ) : (
                 product.price && (
@@ -130,21 +125,20 @@ const ProductCard = ({
               )}
             </div>
 
-            <p className="text-gray-500 text-xs leading-tight line-clamp-2">
-              {product.shortDescription}
+            <p className="text-gray-500 text-xs leading-tight">
+              {product.shortDescription?.split(".")[0]}.
             </p>
 
-            {product.customerReviews && product.customerReviews.length > 0 && (
+            {firstSellerReview && (
               <div className="flex items-center gap-2">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => {
-                    const rating = product.customerReviews![0].averageRating;
+                    const rating = firstSellerReview.averageRating ?? 0;
                     const starValue = i + 1;
-
                     return (
                       <svg
                         key={i}
-                        className={`w-3 h-3 ${
+                        className={`w-5 h-5 ${
                           rating >= starValue
                             ? "text-yellow-400"
                             : rating >= starValue - 0.5
@@ -159,31 +153,27 @@ const ProductCard = ({
                     );
                   })}
                 </div>
-                <span className="text-xs text-gray-700 font-medium">
-                  {product.customerReviews[0].averageRating.toFixed(1)}
+                <span className="text-sm text-gray-700 font-medium">
+                  {firstSellerReview.averageRating?.toFixed(1) ?? 0}
                 </span>
                 <span className="text-xs text-gray-500">
-                  (
-                  {product.customerReviews[0].totalReviews >= 1000
-                    ? `${(
-                        product.customerReviews[0].totalReviews / 1000
-                      ).toFixed(1)}k`
-                    : product.customerReviews[0].totalReviews.toLocaleString()}{" "}
+                  | (
+                  {firstSellerReview.totalReviews >= 1000
+                    ? `${(firstSellerReview.totalReviews / 1000).toFixed(1)}k`
+                    : firstSellerReview.totalReviews.toLocaleString()}{" "}
                   reviews)
                 </span>
               </div>
             )}
           </div>
-
-          {/* Button: Fixed at bottom */}
-          <div className="mt-2 sm:mt-3 pt-2">
+          <div>
             <Button
               variant="premium"
               onClick={(e) => {
                 e.stopPropagation();
                 router.push(`/products/${product.sku}`);
               }}
-              className="w-full text-xs py-2 h-8"
+              className="w-full py-0 px-0 text-sm rounded-none rounded-b-lg"
             >
               ORDER NOW
             </Button>

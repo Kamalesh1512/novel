@@ -63,29 +63,25 @@ const Bestsellers = ({ baseProducts }: BestsellersProps) => {
         {/* Carousel Container */}
         <div className="relative overflow-hidden">
           {/* Large padding on sides */}
-          
-          <div className="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
-            <div className="relative">
-              {/* Navigation Arrows */}
+
+          <div className="max-w-7xl mx-auto px-8">
+            <div className="relative w-full flex items-center">
+              {/* Left Arrow */}
               <button
                 onClick={prevSlide}
                 disabled={currentIndex === 0}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-16 z-10 bg-transparent shadow-none border-none hover:bg-transparent disabled:opacity-50 disabled:cursor-default"
+                className="z-10 bg-transparent shadow-none border-none hover:bg-transparent disabled:opacity-50 disabled:cursor-default"
                 aria-label="Previous slide"
               >
-                <ChevronLeft size={48} className="text-black" />
-              </button>
-
-              <button
-                onClick={nextSlide}
-                disabled={currentIndex >= maxIndex}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-6 z-10 bg-transparent shadow-none border-none hover:bg-transparent disabled:opacity-50 disabled:cursor-default"
-              >
-                <ChevronRight className="text-black" size={48}/>
+                <ChevronLeft
+                  size={96}
+                  strokeWidth={0.5}
+                  className="text-black"
+                />
               </button>
 
               {/* Products Container */}
-              <div className="overflow-hidden">
+              <div className="overflow-hidden flex-1">
                 <div
                   className="flex transition-transform duration-500 ease-in-out gap-3 mb-3"
                   style={{
@@ -105,6 +101,20 @@ const Bestsellers = ({ baseProducts }: BestsellersProps) => {
                   ))}
                 </div>
               </div>
+
+              {/* Right Arrow */}
+              <button
+                onClick={nextSlide}
+                disabled={currentIndex >= maxIndex}
+                className="z-10 bg-transparent shadow-none border-none hover:bg-transparent disabled:opacity-50 disabled:cursor-default"
+                aria-label="Next slide"
+              >
+                <ChevronRight
+                  size={96}
+                  strokeWidth={0.5}
+                  className="text-black"
+                />
+              </button>
             </div>
           </div>
         </div>

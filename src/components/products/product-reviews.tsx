@@ -1,21 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Star, Pause, Play, ShoppingBag } from "lucide-react";
+import { Star, ShoppingBag } from "lucide-react";
 import { CustomerReviewsType, ReviewCommentType } from "@/lib/constants/types";
-import { Button } from "../ui/button";
+import { AnimatedHeading } from "../home/testimonials";
 
 interface ReviewWithSeller extends ReviewCommentType {
   sellerName: string;
   id: string;
-}
-
-interface AnimatedLetterProps {
-  letter: string;
-  delay: number;
-}
-
-interface AnimatedHeadingProps {
-  children: string;
 }
 
 interface StarRatingProps {
@@ -25,48 +16,6 @@ interface StarRatingProps {
 interface CustomerReviewsProps {
   customerReviews: CustomerReviewsType[];
 }
-
-const AnimatedLetter: React.FC<AnimatedLetterProps> = ({ letter, delay }) => {
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), delay * 100);
-    return () => clearTimeout(timer);
-  }, [delay]);
-
-  return (
-    <div
-      className={`inline-block transition-all duration-500 ${
-        isVisible
-          ? "opacity-100 transform translate-y-0"
-          : "opacity-0 transform translate-y-2"
-      }`}
-    >
-      {letter}
-    </div>
-  );
-};
-
-const AnimatedHeading: React.FC<AnimatedHeadingProps> = ({ children }) => {
-  const words = children.split(" ");
-  let letterIndex = 0;
-
-  return (
-    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 font-bebas leading-tight">
-      {words.map((word: string, wordIndex: number) => (
-        <span key={wordIndex} className="inline-block mr-2 sm:mr-4">
-          {word.split("").map((letter: string, i: number) => (
-            <AnimatedLetter
-              key={`${wordIndex}-${i}`}
-              letter={letter}
-              delay={letterIndex++}
-            />
-          ))}
-        </span>
-      ))}
-    </h1>
-  );
-};
 
 const StarRating: React.FC<StarRatingProps> = ({ rating }) => {
   return (
@@ -97,8 +46,7 @@ const formatDate = (dateString: string): string => {
 export const CustomerReviews: React.FC<CustomerReviewsProps> = ({
   customerReviews = [],
 }) => {
-  const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [currentOffset, setCurrentOffset] = useState<number>(0);
+  const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
   // Check if mobile on mount and resize
@@ -131,15 +79,7 @@ export const CustomerReviews: React.FC<CustomerReviewsProps> = ({
   // If no reviews available, show placeholder
   if (allReviews.length === 0) {
     return (
-      <div
-        className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 overflow-hidden rounded-t-2xl"
-        style={{
-          backgroundImage: "url('/Images/tests-bg.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          padding: isMobile ? "40px 20px" : "60px 40px 120px 40px",
-        }}
-      >
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-16 bg-gray-50">
         <div className="text-center">
           <ShoppingBag className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-600 mb-2">
@@ -153,7 +93,7 @@ export const CustomerReviews: React.FC<CustomerReviewsProps> = ({
     );
   }
 
-  // Duplicate reviews for infinite scroll (triple for smooth loop)
+  // Duplicate reviews for infinite scroll
   const duplicatedReviews: ReviewWithSeller[] = [
     ...allReviews,
     ...allReviews,
@@ -173,162 +113,75 @@ export const CustomerReviews: React.FC<CustomerReviewsProps> = ({
         ) / customerReviews.length
       : 0;
 
-  useEffect(() => {
-    if (isPaused || allReviews.length === 0) return;
-
-    const interval = setInterval(() => {
-      setCurrentOffset((prev: number) => {
-        const newOffset = prev - 3; // Increased from 1 to 3 pixels per frame (same as testimonials)
-        const cardWidth = isMobile ? 280 : 320; // Card width
-        const gap = isMobile ? 16 : 24;
-        const totalWidth = allReviews.length * (cardWidth + gap);
-
-        if (Math.abs(newOffset) >= totalWidth) {
-          return 0;
-        }
-        return newOffset;
-      });
-    }, 30); // Reduced from 50ms to 30ms for faster updates (same as testimonials)
-
-    return () => clearInterval(interval);
-  }, [isPaused, isMobile, allReviews.length]);
-
   return (
-    <div
-      className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 overflow-hidden rounded-t-2xl"
-      style={{
-        backgroundImage: "url('/Images/tests-bg.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        padding: isMobile ? "40px 20px" : "60px 40px 120px 40px",
-      }}
-    >
-      <div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start lg:items-center">
-          {/* Left Column */}
-          <div className="space-y-6 sm:space-y-8">
-            {/* Pause Button */}
-            <Button onClick={() => setIsPaused(!isPaused)} variant={"outline"}>
-              {isPaused ? (
-                <Play className="w-4 h-4" />
-              ) : (
-                <Pause className="w-4 h-4" />
-              )}
-              <span className="font-medium">{isPaused ? "Play" : "Pause"}</span>
-            </Button>
-
-            {/* Animated Heading */}
-            <AnimatedHeading>What Our Customers Says!</AnimatedHeading>
-
-            {/* Description */}
-            <p className="text-black text-base sm:text-lg leading-relaxed">
-              Discover authentic reviews from customers who love our products.
-              Their genuine experiences highlight the quality, effectiveness,
-              and satisfaction that make our products their trusted choice.
-            </p>
-
-            {/* Rating Summary */}
-            {totalReviews > 0 && (
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex items-center gap-2">
-                  <StarRating rating={Math.round(averageRating)} />
-                  <span className="text-black font-medium text-sm sm:text-base ml-2">
-                    {averageRating.toFixed(1)}
-                  </span>
-                </div>
-                <p className="text-black font-medium text-sm sm:text-base">
-                  {totalReviews.toLocaleString()}+ Customer Reviews
-                </p>
-              </div>
-            )}
-
-            {/* Seller Summary Grid */}
-            {customerReviews.length > 0 && (
-              <div className="bg-white/20 backdrop-blur-md rounded-2xl shadow-lg border border-white/30 hover:shadow-xl transition-shadow p-4 sm:p-6">
-                <h3 className="text-black font-medium text-lg mb-4">
-                  Reviews on Platforms:
-                </h3>
-                <div className="grid grid-cols-1 gap-3">
-                  {customerReviews.map((seller, index) => (
-                    <div
-                      key={`${seller.sellerName}-${index}`}
-                      className="flex items-center justify-between bg-white/30 rounded-lg p-3"
-                    >
-                      <div>
-                        <p className="font-medium text-black">
-                          {seller.sellerName}
-                        </p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <StarRating
-                            rating={Math.round(seller.averageRating)}
-                          />
-                          <span className="text-black text-sm">
-                            {seller.averageRating.toFixed(1)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-black text-sm font-medium">
-                          {seller.totalReviews.toLocaleString()}
-                        </p>
-                        <p className="text-black text-xs">reviews</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column - Horizontal Carousel */}
-          <div className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
+    <div className="max-w-4xl mx-auto py-12 bg-transparent">
+      <div className="relative overflow-hidden">
+        <h2 className="text-3xl font-bold text-green-800 mb-8 text-center">
+          What Our Customers Says!
+        </h2>
+        <div
+          className="flex gap-4 sm:gap-6"
+          style={{
+            width: `${duplicatedReviews.length * (isMobile ? 280 : 320)}px`,
+            animationName: "slide",
+            animationDuration: `${duplicatedReviews.length * 3}s`,
+            animationTimingFunction: "linear",
+            animationIterationCount: "infinite",
+            animationPlayState: isHovered ? "paused" : "running",
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {duplicatedReviews.map((review, index) => (
             <div
-              className="flex transition-transform duration-75 ease-linear"
-              style={{
-                transform: `translateX(${currentOffset}px)`,
-                animation: isPaused ? "none" : undefined,
-              }}
+              key={`${review.id}-${index}`}
+              className="flex-shrink-0"
+              style={{ width: isMobile ? "260px" : "300px" }}
             >
-              {duplicatedReviews.map((review, index) => (
-                <div
-                  key={`${review.id}-${index}`}
-                  className="flex-shrink-0 mr-4 sm:mr-6"
-                  style={{ width: isMobile ? "260px" : "300px" }}
-                >
-                  <div className="bg-white/20 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-white/30 hover:shadow-xl transition-shadow h-56 flex flex-col justify-between">
-                    {/* Review Text */}
-                    <p className="text-black leading-tight line-clamp-2 mb-4 sm:mb-6 text-sm sm:text-base flex-grow overflow-hidden">
-                      "{review.comment}"
-                    </p>
+              <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 hover:scale-105 h-56 flex flex-col justify-between">
+                {/* Review Text */}
+                <p className="text-gray-700 leading-tight line-clamp-2 mb-4 sm:mb-6 text-sm sm:text-base flex-grow overflow-hidden">
+                  "{review.comment}"
+                </p>
 
-                    {/* Author, Rating and Date */}
-                    <div className="space-y-3">
-                      {/* Rating */}
-                      <div className="flex justify-center">
-                        <StarRating rating={review.rating} />
-                      </div>
+                {/* Author, Rating and Date */}
+                <div className="space-y-3">
+                  {/* Rating */}
+                  <div className="flex justify-center">
+                    <StarRating rating={review.rating} />
+                  </div>
 
-                      {/* Reviewer Info */}
-                      <div className="text-center">
-                        <span className="font-medium text-black text-sm sm:text-base block">
-                          {review.reviewerName}
-                        </span>
-                        <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-700 mt-1">
-                          <span>{formatDate(review.date as string)}</span>
-                          <span>•</span>
-                          <span className="font-medium">
-                            {review.sellerName}
-                          </span>
-                        </div>
-                      </div>
+                  {/* Reviewer Info */}
+                  <div className="text-center">
+                    <span className="font-medium text-gray-900 text-sm sm:text-base block">
+                      {review.reviewerName}
+                    </span>
+                    <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 mt-1">
+                      <span>{formatDate(review.date as string)}</span>
+                      <span>•</span>
+                      <span className="font-medium">{review.sellerName}</span>
                     </div>
                   </div>
                 </div>
-              ))}
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
+
+      {/* CSS Animation */}
+      <style jsx>{`
+        @keyframes slide {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(
+              -${allReviews.length * (isMobile ? 280 : 320)}px
+            );
+          }
+        }
+      `}</style>
     </div>
   );
 };

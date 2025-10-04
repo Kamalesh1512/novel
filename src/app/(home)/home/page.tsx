@@ -15,6 +15,8 @@ import StealDeals from "@/components/home/steal-deals";
 import Testimonials from "@/components/home/testimonials";
 import CategoriesGrid from "@/components/home/categories-grid";
 import LogoSlider from "@/components/home/sellers-logo-slider";
+import { AnimatePresence, motion } from "framer-motion";
+import WhatsAppButton from "@/components/global/interactive/whatsAppbutton";
 
 export default function Home() {
   const { setProducts, getAllProducts } = useProductStore();
@@ -41,7 +43,6 @@ export default function Home() {
       setLoading(false);
     }
   };
-    
 
   useEffect(() => {
     fetchProducts();
@@ -52,7 +53,6 @@ export default function Home() {
 
   const stealDeals = products.filter((prod: any) => prod.featured);
 
-
   if (loading) {
     return <LoadingScreen description="" />;
   }
@@ -62,14 +62,26 @@ export default function Home() {
       <Header isHome={true} />
       <Hero />
       <FeaturedProducts products={bestSellers} />
-      {/* <Categories products={products} /> */}
-      <CategoriesGrid/>
+      <CategoriesGrid />
       <TrustedByMothers />
-      {/* <AnnouncementBanner/> */}
-      <StealDeals products={stealDeals}/>
-      <Testimonials/>
-      <LogoSlider/>
+      <StealDeals products={stealDeals} />
+      <Testimonials />
+      <LogoSlider />
       <Footer />
+
+      <div>
+        <AnimatePresence>
+          <motion.div
+            className="fixed bottom-6 right-6 z-50 flex flex-col gap-3"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 2, duration: 0.5 }}
+          >
+            {/* WhatsApp Button */}
+            <WhatsAppButton />
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

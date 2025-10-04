@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -23,7 +24,7 @@ import {
   Phone,
   Mail,
   Clock,
-  Send,
+  Send, 
   MessageCircle,
   Building2,
   Users,
@@ -35,23 +36,35 @@ import {
   Shield,
   Award,
   Factory,
+  Circle,
+  CircleAlert,
+  CircleDotDashed,
+  CircleArrowOutDownLeft,
+  Loader,
+  AlertCircle,
 } from "lucide-react";
 import { ScrollProgressBar } from "@/components/global/interactive/scroll-progressbar";
 import { TiltCard } from "@/components/global/interactive/tiltcard";
 import { AnimatedCounter } from "@/components/global/interactive/animated-counter";
 import WhatsAppButton from "@/components/global/interactive/whatsAppbutton";
+import { z } from "zod";
+import { ContactFormData, contactFormSchema } from "@/lib/schema/contactFormSchema";
+
+
 
 export default function ContactPage() {
   const { scrollY, scrollYProgress } = useScroll();
   const [isMobile, setIsMobile] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
+  const [formData, setFormData] = useState<ContactFormData>({
+    fullName: "",
     email: "",
     phone: "",
-    company: "",
+    subject: "",
     message: "",
   });
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showValidationAlert, setShowValidationAlert] = useState(false);
 
   // Check if mobile
   useEffect(() => {
@@ -110,7 +123,7 @@ export default function ContactPage() {
   const locationsInView = useInView(locationsRef, { once: true, amount: 0.3 });
 
   const contactStats = [
-    { value: 24, label: "Hours Support", icon: Clock, suffix: "/7" },
+    { value: 12, label: "Hours Support", icon: Clock, suffix: "/6" },
     { value: 50, label: "Countries Served", icon: Globe },
     { value: 10, label: "Million+ Customers", icon: Users, suffix: "M+" },
     { value: 15, label: "Years Experience", icon: Award },
@@ -164,35 +177,127 @@ export default function ContactPage() {
     },
   ];
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    // Clear specific field error when user starts typing
+    if (formErrors[name as keyof ContactFormData]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
+
+    // Hide validation alert if it's showing
+    if (showValidationAlert) {
+      setShowValidationAlert(false);
+    }
   };
 
-  const handleSubmit = async (e: any) => {
+  const validateForm = () => {
+    try {
+      contactFormSchema.parse(formData);
+      setFormErrors({});
+      return true;
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errors: Partial<Record<keyof ContactFormData, string>> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            errors[err.path[0] as keyof ContactFormData] = err.message;
+          }
+        });
+        setFormErrors(errors);
+        setShowValidationAlert(true);
+        
+        // Hide alert after 5 seconds
+        setTimeout(() => setShowValidationAlert(false), 5000);
+        
+        return false;
+      }
+      return false;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      // Scroll to first error field
+      const firstErrorField = Object.keys(formErrors)[0];
+      if (firstErrorField) {
+        const element = document.getElementById(firstErrorField);
+        if (element) {
+          element.focus();
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Simulate form submission
+    // Simulate sending
     setTimeout(() => {
       setIsSubmitting(false);
-      alert("Thank you for your message! We'll get back to you soon.");
+
+      // Open WhatsApp with filled message
+      const whatsappNumber = "919845398453";
+      const msg = `Hello, my name is ${formData.fullName}.
+Email: ${formData.email}
+Phone: ${formData.phone}
+Subject: ${formData.subject}
+Message: ${formData.message}`;
+      
+      window.open(
+        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`,
+        "_blank"
+      );
+
+      // Reset form
       setFormData({
-        name: "",
+        fullName: "",
         email: "",
         phone: "",
-        company: "",
+        subject: "",
         message: "",
       });
-    }, 2000);
+      setFormErrors({});
+    }, 1500);
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gray-50">
       <ScrollProgressBar />
+      
+      {/* Validation Alert */}
+      <AnimatePresence>
+        {showValidationAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
+            className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50"
+          >
+            <Card className="bg-red-50 border-red-200 shadow-lg">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3 text-red-700">
+                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold">Please check your form</p>
+                    <p className="text-sm">Some required fields are missing or invalid</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Hero Section */}
       <motion.section
         ref={heroRef}
@@ -233,10 +338,7 @@ export default function ContactPage() {
               whileInView={{ opacity: [0, 1], y: [20, 0] }}
               transition={{ duration: 0.8 }}
             >
-              Ready to partner with{" "}
-              <strong className="text-green-700">Novel Tissues</strong>? We'd
-              love to hear from you and discuss how we can meet your hygiene
-              product needs.
+              Have questions about our products or need assistance? We'd love to hear from you and help with your hygiene product needs.
             </motion.p>
             <motion.p
               className="flex flex-wrap justify-center items-center gap-2"
@@ -428,142 +530,172 @@ export default function ContactPage() {
             <motion.div
               ref={formRef}
               id="contact-form"
+              className="h-full flex flex-col"
               initial={{ opacity: 0, x: 50 }}
               animate={formInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8 }}
             >
-              <TiltCard>
-                <Card className="bg-white shadow-2xl border-0">
-                  <CardContent className="p-6 sm:p-8">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
-                      Send us a Message
-                    </h3>
+              <Card className="bg-white shadow-2xl border-0 h-full flex flex-col">
+                <CardContent className="p-6 sm:p-8 flex flex-col flex-grow">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center">
+                    Send us a Message
+                  </h3>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1, duration: 0.6 }}
+                  <form
+                    onSubmit={handleSubmit}
+                    className="space-y-6 flex flex-col flex-grow"
+                  >
+                    <div>
+                      <Label htmlFor="fullName" className="mb-2">
+                        Full Name <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="fullName"
+                        name="fullName"
+                        value={formData.fullName}
+                        onChange={handleInputChange}
+                        className={formErrors.fullName ? "border-red-500 focus:border-red-500" : ""}
+                        placeholder="Enter your full name"
+                      />
+                      {formErrors.fullName && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-red-500 text-sm mt-1 flex items-center gap-1"
                         >
-                          <Label htmlFor="name">Name *</Label>
-                          <Input
-                            id="name"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Your full name"
-                            className="mt-2"
-                          />
-                        </motion.div>
+                          <AlertCircle className="w-3 h-3" />
+                          {formErrors.fullName}
+                        </motion.p>
+                      )}
+                    </div>
 
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2, duration: 0.6 }}
+                    <div>
+                      <Label htmlFor="email" className="mb-2">
+                        Email Address <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className={formErrors.email ? "border-red-500 focus:border-red-500" : ""}
+                        placeholder="Enter your email address"
+                      />
+                      {formErrors.email && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-red-500 text-sm mt-1 flex items-center gap-1"
                         >
-                          <Label htmlFor="email">Email *</Label>
-                          <Input
-                            id="email"
-                            name="email"
-                            type="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="your.email@example.com"
-                            className="mt-2"
-                          />
-                        </motion.div>
-                      </div>
+                          <AlertCircle className="w-3 h-3" />
+                          {formErrors.email}
+                        </motion.p>
+                      )}
+                    </div>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3, duration: 0.6 }}
+                    <div>
+                      <Label htmlFor="phone" className="mb-2">
+                        Phone Number <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className={formErrors.phone ? "border-red-500 focus:border-red-500" : ""}
+                        placeholder="Enter your phone number"
+                      />
+                      {formErrors.phone && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-red-500 text-sm mt-1 flex items-center gap-1"
                         >
-                          <Label htmlFor="phone">Phone *</Label>
-                          <Input
-                            id="phone"
-                            name="phone"
-                            type="tel"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="+91 98453 98453"
-                            className="mt-2"
-                          />
-                        </motion.div>
+                          <AlertCircle className="w-3 h-3" />
+                          {formErrors.phone}
+                        </motion.p>
+                      )}
+                    </div>
 
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4, duration: 0.6 }}
+                    <div>
+                      <Label htmlFor="subject" className="mb-2">
+                        Subject <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        className={formErrors.subject ? "border-red-500 focus:border-red-500" : ""}
+                        placeholder="What is this regarding?"
+                      />
+                      {formErrors.subject && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-red-500 text-sm mt-1 flex items-center gap-1"
                         >
-                          <Label htmlFor="company">Company</Label>
-                          <Input
-                            id="company"
-                            name="company"
-                            value={formData.company}
-                            onChange={handleInputChange}
-                            placeholder="Your company name"
-                            className="mt-2"
-                          />
-                        </motion.div>
-                      </div>
+                          <AlertCircle className="w-3 h-3" />
+                          {formErrors.subject}
+                        </motion.p>
+                      )}
+                    </div>
 
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.6 }}
+                    <div className="flex-grow">
+                      <Label htmlFor="message" className="mb-2">
+                        Message <span className="text-red-500">*</span>
+                      </Label>
+                      <Textarea
+                        id="message"
+                        name="message"
+                        rows={4}
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        className={`min-h-[120px] ${formErrors.message ? "border-red-500 focus:border-red-500" : ""}`}
+                        placeholder="Tell us more about your enquiry..."
+                      />
+                      {formErrors.message && (
+                        <motion.p
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-red-500 text-sm mt-1 flex items-center gap-1"
+                        >
+                          <AlertCircle className="w-3 h-3" />
+                          {formErrors.message}
+                        </motion.p>
+                      )}
+                    </div>
+
+                    <div className="pt-4">
+                      <Button
+                        type="submit"
+                        size="lg"
+                        variant="premium"
+                        className="w-full rounded-2xl"
+                        disabled={isSubmitting}
                       >
-                        <Label htmlFor="message">Message *</Label>
-                        <Textarea
-                          id="message"
-                          name="message"
-                          value={formData.message}
-                          onChange={handleInputChange}
-                          required
-                          placeholder="Tell us about your requirements..."
-                          rows={5}
-                          className="mt-2"
-                        />
-                      </motion.div>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6, duration: 0.6 }}
-                      >
-                        <Button
-                          type="submit"
-                          variant="premium"
-                          size="lg"
-                          className="w-full rounded-2xl"
-                          disabled={isSubmitting}
-                        >
-                          {isSubmitting ? (
-                            <motion.div
-                              animate={{ rotate: 360 }}
-                              transition={{
-                                duration: 1,
-                                repeat: Infinity,
-                                ease: "linear",
-                              }}
-                            >
-                              <Sparkles className="w-5 h-5 mr-2" />
-                            </motion.div>
-                          ) : (
-                            <Send className="w-5 h-5 mr-2" />
-                          )}
-                          {isSubmitting ? "Sending..." : "Send Message"}
-                        </Button>
-                      </motion.div>
-                    </form>
-                  </CardContent>
-                </Card>
-              </TiltCard>
+                        {isSubmitting ? (
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{
+                              duration: 1,
+                              repeat: Infinity,
+                              ease: "linear",
+                            }}
+                          >
+                            <Loader className="w-5 h-5 mr-2" />
+                          </motion.div>
+                        ) : (
+                          <Send className="w-5 h-5 mr-2" />
+                        )}
+                        {isSubmitting ? "Sending..." : "Send Message"}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
             </motion.div>
           </div>
         </div>
@@ -577,7 +709,7 @@ export default function ContactPage() {
       >
         <div className="max-w-7xl mx-auto">
           <motion.div
-            className="text-center mb-8 sm:mb-12"
+            className="text-center"
             initial={{ opacity: 0, y: 30 }}
             animate={locationsInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8 }}
@@ -656,17 +788,6 @@ export default function ContactPage() {
           </div>
         </div>
       </motion.section>
-      <AnimatePresence>
-        <motion.div
-          className="fixed bottom-6 right-6 z-50 flex flex-col gap-3"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 2, duration: 0.5 }}
-        >
-          {/* WhatsApp Button */}
-          <WhatsAppButton />
-        </motion.div>
-      </AnimatePresence>
     </div>
   );
 }

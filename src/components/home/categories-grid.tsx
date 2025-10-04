@@ -11,24 +11,26 @@ export const mainCategories = [
     img: "/Images/categories/baby-care.png",
   },
   {
-    title: "Feeding & Nursing",
-    href: "/categories/nursing-feeding",
-    img: "/Images/categories/nursing-feeding.png",
+    title: "Indoor Gear",
+    href: "/categories/indoor-gear",
+    img: "/Images/categories/indoor.png",
   },
+
   {
     title: "Outdoor",
     href: "/categories/outdoor-gear",
     img: "/Images/categories/outdoor.png",
   },
   {
-    title: "Indoor Gear",
-    href: "/categories/indoor-gear",
-    img: "/Images/categories/indoor.png",
-  },
-  {
     title: "Adult",
     href: "/categories/adult-care",
     img: "/Images/categories/adult-care.png",
+  },
+
+  {
+    title: "Feeding & Nursing",
+    href: "/categories/nursing-feeding",
+    img: "/Images/categories/nursing-feeding.png",
   },
   {
     title: "Personal Care",

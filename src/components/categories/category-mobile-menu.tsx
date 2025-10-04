@@ -38,7 +38,7 @@ interface MobileMenuProps {
   modelIndex?: number;
 }
 
-export function MobileMenu({ isOpen, onClose, navigation }: MobileMenuProps) {
+export function CategoryMobileMenu({ isOpen, onClose, navigation }: MobileMenuProps) {
   const router = useRouter();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const { data: session, status } = useSession();
@@ -192,7 +192,7 @@ export function MobileMenu({ isOpen, onClose, navigation }: MobileMenuProps) {
                           {item.items.map((subItem, subIndex) => (
                             <button
                               key={subIndex}
-                              onClick={() => handleSubItemClick(`categories/${subItem.href}`)}
+                              onClick={() => handleSubItemClick(`${subItem.href}`)}
                               className="w-full text-left py-2.5 px-6 text-sm text-gray-600 hover:text-green-600 hover:bg-white transition-all duration-200 border-l-4 border-transparent hover:border-green-500"
                             >
                               {subItem.title}

@@ -103,6 +103,19 @@ export const products = pgTable("products", {
       date?: string;
     }[];
   }>(),
+  howToUse: json("how_to_use").$type<
+    {
+      steps: string;
+      answer: string;
+    }[]
+  >(),
+  ingredients: json("ingredients").$type<
+    {
+      name: string;
+      image: string;
+      description: string;
+    }[]
+  >(),
   tags: text("tags"),
   seoTitle: text("seo_title"),
   seoDescription: text("seo_description"),
@@ -117,7 +130,6 @@ export const wishlist = pgTable("wishlist", {
   productId: uuid("product_id").references(() => products.id),
   createdAt: timestamp("created_at").defaultNow(),
 });
-
 
 //banners
 export const banners = pgTable("banners", {

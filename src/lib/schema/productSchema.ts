@@ -37,6 +37,19 @@ export const customerReviewSchema = z.object({
     .optional(),
 });
 
+// How to use schema
+export const howToUseSchema = z.object({
+  steps: z.string().min(1, "Steps are required"), // step1, step2, step3
+  answer: z.string().min(1, "Answer is required"),
+});
+
+// Ingredients schema
+export const ingredientSchema = z.object({
+  name: z.string().min(1, "Ingredient name is required"),
+  image: z.string().url("Invalid image URL").optional().or(z.literal("")),
+  description: z.string().min(1, "Description is required"),
+});
+
 export const productSchema = z.object({
   name: z.string().min(1, "Name is required"),
   description: z.string().optional(),
@@ -61,8 +74,13 @@ export const productSchema = z.object({
   weight: z.coerce.number().optional(),
   features: z.array(z.string()).optional(),
   faqs: z.array(faqSchema).optional(),
-  customerReviews: z.array(customerReviewSchema).optional(), // ✅ New field added
+  customerReviews: z.array(customerReviewSchema).optional(),
+  
+  // New fields
+  howToUse: z.array(howToUseSchema).optional(),
+  ingredients: z.array(ingredientSchema).optional(),
 
+  // Legacy seller fields (kept for backward compatibility)
   amazonEnabled: z.boolean(),
   amazonUrl: z.string().optional(),
   meeshoEnabled: z.boolean(),
@@ -75,3 +93,5 @@ export type ProductFormData = z.infer<typeof productSchema>;
 export type SellerFormData = z.infer<typeof sellerSchema>;
 export type FaqFormData = z.infer<typeof faqSchema>;
 export type CustomerReviewFormData = z.infer<typeof customerReviewSchema>;
+export type HowToUseFormData = z.infer<typeof howToUseSchema>;
+export type IngredientFormData = z.infer<typeof ingredientSchema>;

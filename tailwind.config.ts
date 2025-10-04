@@ -136,7 +136,7 @@ export default {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
       fontFamily:{
-        bebas:['"Bebas Neue"','sans-serif']
+        bebas:['"Bebas Neue"','sans-serif','Pacifico', 'cursive']
       },
       borderRadius: {
         lg: "var(--radius)",

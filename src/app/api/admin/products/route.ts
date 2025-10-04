@@ -63,7 +63,10 @@ export async function POST(request: NextRequest) {
         seoTitle: body.seoTitle,
         seoDescription: body.seoDescription,
         faqs:body.faqs,
-        customerReviews:body.customerReviews
+        customerReviews:body.customerReviews,
+        howToUse:body.howToUse,
+        ingredients:body.ingredients,
+
       })
       .returning();
 

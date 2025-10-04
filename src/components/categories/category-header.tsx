@@ -27,7 +27,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MobileMenu } from "./mobile-menu";
 import { motion, AnimatePresence } from "framer-motion";
 
 import Image from "next/image";
@@ -42,6 +41,7 @@ import { useRouter } from "next/navigation";
 import { LoadingScreen } from "../global/loading";
 import { useProductStore } from "@/store/productStore";
 import { SearchComponent } from "../search/main-search-component";
+import { CategoryMobileMenu } from "./category-mobile-menu";
 
 export type NavigationItem = {
   title: string;
@@ -54,7 +54,7 @@ interface HeaderProps {
   isHome: boolean;
 }
 
-export function Header({ isHome }: HeaderProps) {
+export function CategoryHeader({ isHome }: HeaderProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
@@ -446,7 +446,7 @@ export function Header({ isHome }: HeaderProps) {
                           variant="ghost"
                           className="w-full text-left block px-5 py-3 text-sm hover:bg-green-50 hover:text-green-600 transition-all duration-200 border-l-4 border-transparent hover:border-green-500"
                           onClick={() => {
-                            router.push(`categories/${subItem.href}`);
+                            router.replace(`/categories/${subItem.href}`);
                             setActiveDropdown(null);
                           }}
                         >
@@ -480,7 +480,7 @@ export function Header({ isHome }: HeaderProps) {
       </AnimatePresence>
 
       {/* Mobile Menu */}
-      <MobileMenu
+      <CategoryMobileMenu
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
         navigation={navigationItems}

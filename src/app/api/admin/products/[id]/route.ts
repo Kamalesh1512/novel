@@ -45,6 +45,8 @@ export async function PUT(request: Request, { params }: productsAdminProps) {
       sellers,
       customerReviews,
       faqs,
+      howToUse,
+      ingredients,
     } = body;
 
     const updatedProduct = await db
@@ -71,6 +73,8 @@ export async function PUT(request: Request, { params }: productsAdminProps) {
         sellers:sellers,
         customerReviews:customerReviews,
         faqs:faqs,
+        howToUse:howToUse,
+        ingredients:ingredients
       })
       .where(eq(products.id, id))
       .returning();

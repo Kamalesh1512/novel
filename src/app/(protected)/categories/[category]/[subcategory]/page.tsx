@@ -9,7 +9,6 @@ import { useProductStore } from "@/store/productStore";
 import { navigationItems } from "@/lib/constants/types";
 import LoadingScreen from "@/components/global/loading";
 
-
 import SubcategoryPage from "@/components/categories/sub-category";
 
 function toSubCatSlug(name: string): string {
@@ -32,12 +31,20 @@ function getCategoryBanner(category: string): string {
   return banners[category] || "/images/banners/default-banner.jpg";
 }
 
-function validateCategorySubcategory(category: string, subcategory: string): boolean {
+function validateCategorySubcategory(
+  category: string,
+  subcategory: string
+): boolean {
   try {
-    const categoryItem = navigationItems.find(
-      (item) => toCatSlug(item.title) === category
-    );
-    
+    const categoryItem = navigationItems.find((item) => {
+      const slug =
+        item.title === "Nursing & Feeding Essentials"
+          ? "nursing-feeding"
+          : toCatSlug(item.title);
+
+      return slug === category;
+    });
+
     if (!categoryItem) {
       console.warn(`Category not found: ${category}`);
       return false;
@@ -48,7 +55,9 @@ function validateCategorySubcategory(category: string, subcategory: string): boo
     );
 
     if (!hasSubcategory) {
-      console.warn(`Subcategory not found: ${subcategory} in category: ${category}`);
+      console.warn(
+        `Subcategory not found: ${subcategory} in category: ${category}`
+      );
     }
 
     return hasSubcategory || false;
@@ -62,11 +71,14 @@ export default function SubcategoryComponent() {
   const params = useParams();
   const [isValidating, setIsValidating] = useState(true);
   const [isValid, setIsValid] = useState(false);
-  
+
   const category = params.category as string;
   const subcategory = params.subcategory as string;
 
-  const { products, } = useProductStore();
+  console.log("From params", category);
+  console.log("From params", subcategory);
+
+  const { products } = useProductStore();
 
   // Validate params on mount
   useEffect(() => {
@@ -74,7 +86,7 @@ export default function SubcategoryComponent() {
       const valid = validateCategorySubcategory(category, subcategory);
       setIsValid(valid);
       setIsValidating(false);
-      
+
       if (!valid) {
         console.error(`Invalid route: /categories/${category}/${subcategory}`);
       }
@@ -87,14 +99,14 @@ export default function SubcategoryComponent() {
 
     try {
       return products.filter((p) => {
-        if (!p.sku || typeof p.sku !== 'string') {
-          console.warn('Product missing or invalid SKU:', p);
+        if (!p.sku || typeof p.sku !== "string") {
+          console.warn("Product missing or invalid SKU:", p);
           return false;
         }
 
         const parts = p.sku.split("-");
         if (parts.length < 4) {
-          console.warn('Invalid SKU format:', p.sku);
+          console.warn("Invalid SKU format:", p.sku);
           return false;
         }
 
@@ -102,14 +114,14 @@ export default function SubcategoryComponent() {
         const subcatSlug = parts[3];
 
         const matches = catSlug === category && subcatSlug === subcategory;
-        
+
         if (matches) {
-          console.log('Product matched:', {
+          console.log("Product matched:", {
             sku: p.sku,
             catSlug,
             subcatSlug,
             targetCategory: category,
-            targetSubcategory: subcategory
+            targetSubcategory: subcategory,
           });
         }
 
@@ -123,7 +135,7 @@ export default function SubcategoryComponent() {
 
   // Handle loading states
   if (isValidating) {
-    return <LoadingScreen description=""/>;
+    return <LoadingScreen description="" />;
   }
 
   // Handle validation errors

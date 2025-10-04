@@ -45,12 +45,15 @@
 //   Trash2,
 //   HelpCircle,
 //   ShoppingCart,
+//   Star,
+//   MessageCircle,
 // } from "lucide-react";
 // import {
 //   ProductFormData,
 //   productSchema,
 //   SellerFormData,
 //   FaqFormData,
+//   CustomerReviewFormData,
 // } from "@/lib/schema/productSchema";
 
 // interface ProductFormProps {
@@ -70,6 +73,10 @@
 //   "Pack of 12",
 //   "Single Unit",
 //   "Bulk Pack",
+//   "Small",
+//   "Medium",
+//   "Large",
+//   "XL",
 // ];
 
 // const OFFER_OPTIONS = ["Steal Deals", "None"];
@@ -129,12 +136,29 @@
 //     }
 //   };
 
+//   // Parse existing customer reviews from product data
+//   const parseCustomerReviews = (reviewsData: any): CustomerReviewFormData[] => {
+//     if (!reviewsData) return [];
+
+//     try {
+//       if (typeof reviewsData === "string") {
+//         return JSON.parse(reviewsData);
+//       }
+//       return Array.isArray(reviewsData) ? reviewsData : [];
+//     } catch (error) {
+//       console.error("Error parsing customer reviews:", error);
+//       return [];
+//     }
+//   };
+
 //   const form = useForm<ProductFormData>({
 //     resolver: zodResolver(productSchema),
 //     defaultValues: {
 //       name: product?.name || "",
 //       description: product?.description || "",
 //       shortDescription: product?.shortDescription || "",
+//       price: product?.price || 0,
+//       salePrice: product?.salePrice || 0,
 //       sellers: parseSellers(product?.sellers) || [],
 //       size: product?.size || "",
 //       sku: product?.sku || "",
@@ -150,6 +174,7 @@
 //       weight: product?.weight || undefined,
 //       features: Array.isArray(product?.features) ? product.features : [],
 //       faqs: parseFaqs(product?.faqs) || [],
+//       customerReviews: parseCustomerReviews(product?.customerReviews) || [],
 
 //       // Legacy seller fields (kept for backward compatibility)
 //       amazonEnabled: false,
@@ -178,6 +203,15 @@
 //   } = useFieldArray({
 //     control: form.control,
 //     name: "faqs",
+//   });
+
+//   const {
+//     fields: reviewFields,
+//     append: appendReview,
+//     remove: removeReview,
+//   } = useFieldArray({
+//     control: form.control,
+//     name: "customerReviews",
 //   });
 
 //   const productId = product?.id || "new-product";
@@ -214,6 +248,48 @@
 //       question: "",
 //       answer: "",
 //     });
+//   };
+
+//   // Add new customer review
+//   const addCustomerReview = () => {
+//     appendReview({
+//       sellerName: "",
+//       totalReviews: 0,
+//       averageRating: 0,
+//       topComments: [],
+//     });
+//   };
+
+//   // Add comment to specific review
+//   const addCommentToReview = (reviewIndex: number) => {
+//     const currentReview = form.getValues(`customerReviews.${reviewIndex}`);
+//     const updatedComments = [
+//       ...(currentReview.topComments || []),
+//       {
+//         comment: "",
+//         rating: 5,
+//         reviewerName: "",
+//         date: "",
+//       },
+//     ];
+//     form.setValue(
+//       `customerReviews.${reviewIndex}.topComments`,
+//       updatedComments
+//     );
+//   };
+
+//   // Remove comment from specific review
+//   const removeCommentFromReview = (
+//     reviewIndex: number,
+//     commentIndex: number
+//   ) => {
+//     const currentReview = form.getValues(`customerReviews.${reviewIndex}`);
+//     const updatedComments =
+//       currentReview.topComments?.filter((_, i) => i !== commentIndex) || [];
+//     form.setValue(
+//       `customerReviews.${reviewIndex}.topComments`,
+//       updatedComments
+//     );
 //   };
 
 //   useEffect(() => {
@@ -277,10 +353,16 @@
 //       const validSellers =
 //         data.sellers?.filter((seller) => seller.name && seller.url) || [];
 
+//       // Filter out customer reviews with empty required fields
+//       const validCustomerReviews =
+//         data.customerReviews?.filter((review) => review.sellerName) || [];
+
 //       const payload = {
 //         name: data.name,
 //         description: data.description,
 //         shortDescription: data.shortDescription,
+//         price:data.price,
+//         salePrice:data.salePrice,
 //         sellers: validSellers,
 //         size: data.size,
 //         sku: data.sku,
@@ -296,6 +378,7 @@
 //         images,
 //         features,
 //         faqs: data.faqs?.filter((faq) => faq.question && faq.answer) || [],
+//         customerReviews: validCustomerReviews,
 //       };
 
 //       const response = await fetch(url, {
@@ -369,7 +452,57 @@
 //               </FormItem>
 //             )}
 //           />
+//           <FormField
+//             control={form.control}
+//             name="price"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Price</FormLabel>
+//                 <FormControl>
+//                   <Input
+//                     type="number"
+//                     step="0.1"
+//                     placeholder="0.00"
+//                     value={field.value ?? ""}
+//                     onChange={(e) =>
+//                       field.onChange(
+//                         e.target.value === ""
+//                           ? null
+//                           : parseFloat(e.target.value)
+//                       )
+//                     }
+//                   />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
 
+//           <FormField
+//             control={form.control}
+//             name="salePrice"
+//             render={({ field }) => (
+//               <FormItem>
+//                 <FormLabel>Sale Price (Optional)</FormLabel>
+//                 <FormControl>
+//                   <Input
+//                     type="number"
+//                     step="0.1"
+//                     placeholder="0.00"
+//                     value={field.value ?? ""}
+//                     onChange={(e) =>
+//                       field.onChange(
+//                         e.target.value === ""
+//                           ? null
+//                           : parseFloat(e.target.value)
+//                       )
+//                     }
+//                   />
+//                 </FormControl>
+//                 <FormMessage />
+//               </FormItem>
+//             )}
+//           />
 //           <FormField
 //             control={form.control}
 //             name="stock"
@@ -424,7 +557,7 @@
 //             name="size"
 //             render={({ field }) => (
 //               <FormItem>
-//                 <FormLabel>Size</FormLabel>
+//                 <FormLabel>Size (Optional)</FormLabel>
 //                 <FormControl>
 //                   <Input
 //                     placeholder="Enter size (e.g., Large, 32GB)"
@@ -436,7 +569,7 @@
 //             )}
 //           />
 
-//           <FormField
+//           {/* <FormField
 //             control={form.control}
 //             name="weight"
 //             render={({ field }) => (
@@ -460,7 +593,7 @@
 //                 <FormMessage />
 //               </FormItem>
 //             )}
-//           />
+//           /> */}
 //         </div>
 
 //         {/* Descriptions */}
@@ -703,6 +836,293 @@
 //           </CardContent>
 //         </Card>
 
+//         {/* Customer Reviews Section */}
+//         <Card>
+//           <CardHeader className="flex flex-row items-center justify-between">
+//             <CardTitle className="flex items-center gap-2">
+//               <Star className="h-5 w-5" />
+//               Customer Reviews
+//             </CardTitle>
+//             <Button
+//               type="button"
+//               variant="outline"
+//               size="sm"
+//               onClick={addCustomerReview}
+//             >
+//               <Plus className="h-4 w-4 mr-2" />
+//               Add Review Data
+//             </Button>
+//           </CardHeader>
+//           <CardContent>
+//             <div className="space-y-6">
+//               {reviewFields.map((field, reviewIndex) => (
+//                 <div key={field.id} className="border p-4 rounded-lg space-y-4">
+//                   <div className="flex items-center justify-between">
+//                     <h4 className="font-medium">
+//                       Review Data #{reviewIndex + 1}
+//                     </h4>
+//                     <Button
+//                       type="button"
+//                       variant="ghost"
+//                       size="sm"
+//                       onClick={() => removeReview(reviewIndex)}
+//                     >
+//                       <Trash2 className="h-4 w-4" />
+//                     </Button>
+//                   </div>
+
+//                   {/* Basic Review Info */}
+//                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//                     <FormField
+//                       control={form.control}
+//                       name={`customerReviews.${reviewIndex}.sellerName`}
+//                       render={({ field }) => (
+//                         <FormItem>
+//                           <FormLabel>Seller Platform</FormLabel>
+//                           <Select
+//                             onValueChange={field.onChange}
+//                             value={field.value}
+//                           >
+//                             <FormControl>
+//                               <SelectTrigger>
+//                                 <SelectValue placeholder="Select seller" />
+//                               </SelectTrigger>
+//                             </FormControl>
+//                             <SelectContent>
+//                               {SELLER_OPTIONS.map((seller) => (
+//                                 <SelectItem key={seller} value={seller}>
+//                                   {seller}
+//                                 </SelectItem>
+//                               ))}
+//                             </SelectContent>
+//                           </Select>
+//                           <FormMessage />
+//                         </FormItem>
+//                       )}
+//                     />
+
+//                     <FormField
+//                       control={form.control}
+//                       name={`customerReviews.${reviewIndex}.totalReviews`}
+//                       render={({ field }) => (
+//                         <FormItem>
+//                           <FormLabel>Total Reviews</FormLabel>
+//                           <FormControl>
+//                             <Input
+//                               type="number"
+//                               placeholder="0"
+//                               {...field}
+//                               onChange={(e) =>
+//                                 field.onChange(parseInt(e.target.value) || 0)
+//                               }
+//                             />
+//                           </FormControl>
+//                           <FormMessage />
+//                         </FormItem>
+//                       )}
+//                     />
+
+//                     <FormField
+//                       control={form.control}
+//                       name={`customerReviews.${reviewIndex}.averageRating`}
+//                       render={({ field }) => (
+//                         <FormItem>
+//                           <FormLabel>Average Rating</FormLabel>
+//                           <FormControl>
+//                             <Input
+//                               type="number"
+//                               step="0.1"
+//                               min="0"
+//                               max="5"
+//                               placeholder="0.0"
+//                               {...field}
+//                               onChange={(e) =>
+//                                 field.onChange(parseFloat(e.target.value) || 0)
+//                               }
+//                             />
+//                           </FormControl>
+//                           <FormDescription>
+//                             Rating between 0 and 5
+//                           </FormDescription>
+//                           <FormMessage />
+//                         </FormItem>
+//                       )}
+//                     />
+//                   </div>
+
+//                   {/* Top Comments */}
+//                   <div className="space-y-4">
+//                     <div className="flex items-center justify-between">
+//                       <FormLabel className="flex items-center gap-2">
+//                         <MessageCircle className="h-4 w-4" />
+//                         Top Comments
+//                       </FormLabel>
+//                       <Button
+//                         type="button"
+//                         variant="outline"
+//                         size="sm"
+//                         onClick={() => addCommentToReview(reviewIndex)}
+//                       >
+//                         <Plus className="h-4 w-4 mr-2" />
+//                         Add Comment
+//                       </Button>
+//                     </div>
+
+//                     <div className="space-y-3">
+//                       {form
+//                         .watch(`customerReviews.${reviewIndex}.topComments`)
+//                         ?.map((_, commentIndex) => (
+//                           <div
+//                             key={commentIndex}
+//                             className="border border-gray-200 p-3 rounded-md space-y-3"
+//                           >
+//                             <div className="flex items-center justify-between">
+//                               <span className="text-sm font-medium">
+//                                 Comment #{commentIndex + 1}
+//                               </span>
+//                               <Button
+//                                 type="button"
+//                                 variant="ghost"
+//                                 size="sm"
+//                                 onClick={() =>
+//                                   removeCommentFromReview(
+//                                     reviewIndex,
+//                                     commentIndex
+//                                   )
+//                                 }
+//                               >
+//                                 <X className="h-4 w-4" />
+//                               </Button>
+//                             </div>
+
+//                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+//                               <FormField
+//                                 control={form.control}
+//                                 name={`customerReviews.${reviewIndex}.topComments.${commentIndex}.reviewerName`}
+//                                 render={({ field }) => (
+//                                   <FormItem>
+//                                     <FormLabel className="text-xs">
+//                                       Reviewer Name
+//                                     </FormLabel>
+//                                     <FormControl>
+//                                       <Input
+//                                         placeholder="Enter reviewer name"
+//                                         {...field}
+//                                       />
+//                                     </FormControl>
+//                                     <FormMessage />
+//                                   </FormItem>
+//                                 )}
+//                               />
+
+//                               <FormField
+//                                 control={form.control}
+//                                 name={`customerReviews.${reviewIndex}.topComments.${commentIndex}.rating`}
+//                                 render={({ field }) => (
+//                                   <FormItem>
+//                                     <FormLabel className="text-xs">
+//                                       Rating
+//                                     </FormLabel>
+//                                     <Select
+//                                       onValueChange={(value) =>
+//                                         field.onChange(parseInt(value))
+//                                       }
+//                                       value={field.value?.toString()}
+//                                     >
+//                                       <FormControl>
+//                                         <SelectTrigger>
+//                                           <SelectValue placeholder="Select rating" />
+//                                         </SelectTrigger>
+//                                       </FormControl>
+//                                       <SelectContent>
+//                                         {[1, 2, 3, 4, 5].map((rating) => (
+//                                           <SelectItem
+//                                             key={rating}
+//                                             value={rating.toString()}
+//                                           >
+//                                             <div className="flex items-center gap-1">
+//                                               {rating}
+//                                               <Star className="h-3 w-3 fill-current" />
+//                                             </div>
+//                                           </SelectItem>
+//                                         ))}
+//                                       </SelectContent>
+//                                     </Select>
+//                                     <FormMessage />
+//                                   </FormItem>
+//                                 )}
+//                               />
+
+//                               <FormField
+//                                 control={form.control}
+//                                 name={`customerReviews.${reviewIndex}.topComments.${commentIndex}.date`}
+//                                 render={({ field }) => (
+//                                   <FormItem>
+//                                     <FormLabel className="text-xs">
+//                                       Review Date
+//                                     </FormLabel>
+//                                     <FormControl>
+//                                       <Input type="date" {...field} />
+//                                     </FormControl>
+//                                     <FormMessage />
+//                                   </FormItem>
+//                                 )}
+//                               />
+//                             </div>
+
+//                             <FormField
+//                               control={form.control}
+//                               name={`customerReviews.${reviewIndex}.topComments.${commentIndex}.comment`}
+//                               render={({ field }) => (
+//                                 <FormItem>
+//                                   <FormLabel className="text-xs">
+//                                     Comment
+//                                   </FormLabel>
+//                                   <FormControl>
+//                                     <Textarea
+//                                       placeholder="Enter customer review comment"
+//                                       className="min-h-[60px]"
+//                                       {...field}
+//                                     />
+//                                   </FormControl>
+//                                   <FormMessage />
+//                                 </FormItem>
+//                               )}
+//                             />
+//                           </div>
+//                         )) || []}
+
+//                       {(!form.watch(
+//                         `customerReviews.${reviewIndex}.topComments`
+//                       ) ||
+//                         form.watch(`customerReviews.${reviewIndex}.topComments`)
+//                           ?.length === 0) && (
+//                         <div className="text-center text-gray-500 py-4">
+//                           <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-300" />
+//                           <p className="text-sm">
+//                             No comments added yet. Click "Add Comment" to get
+//                             started.
+//                           </p>
+//                         </div>
+//                       )}
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))}
+
+//               {reviewFields.length === 0 && (
+//                 <div className="text-center text-gray-500 py-8">
+//                   <Star className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+//                   <p>
+//                     No customer review data added yet. Click "Add Review Data"
+//                     to get started.
+//                   </p>
+//                 </div>
+//               )}
+//             </div>
+//           </CardContent>
+//         </Card>
+
 //         {/* FAQ Section */}
 //         <Card>
 //           <CardHeader className="flex flex-row items-center justify-between">
@@ -828,9 +1248,7 @@
 //               render={({ field }) => (
 //                 <FormItem className="flex items-center justify-between gap-4 p-4 border rounded-lg">
 //                   <div>
-//                     <FormLabel className="text-base">
-//                       Steal Deals
-//                     </FormLabel>
+//                     <FormLabel className="text-base">Steal Deals</FormLabel>
 //                   </div>
 //                   <FormControl>
 //                     <Switch
@@ -898,6 +1316,8 @@
 //   );
 // }
 
+
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -947,6 +1367,9 @@ import {
   ShoppingCart,
   Star,
   MessageCircle,
+  ClipboardList,
+  Pill,
+  Image,
 } from "lucide-react";
 import {
   ProductFormData,
@@ -954,6 +1377,8 @@ import {
   SellerFormData,
   FaqFormData,
   CustomerReviewFormData,
+  HowToUseFormData,
+  IngredientFormData,
 } from "@/lib/schema/productSchema";
 
 interface ProductFormProps {
@@ -1051,6 +1476,36 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
     }
   };
 
+  // Parse existing how to use from product data
+  const parseHowToUse = (howToUseData: any): HowToUseFormData[] => {
+    if (!howToUseData) return [];
+
+    try {
+      if (typeof howToUseData === "string") {
+        return JSON.parse(howToUseData);
+      }
+      return Array.isArray(howToUseData) ? howToUseData : [];
+    } catch (error) {
+      console.error("Error parsing how to use:", error);
+      return [];
+    }
+  };
+
+  // Parse existing ingredients from product data
+  const parseIngredients = (ingredientsData: any): IngredientFormData[] => {
+    if (!ingredientsData) return [];
+
+    try {
+      if (typeof ingredientsData === "string") {
+        return JSON.parse(ingredientsData);
+      }
+      return Array.isArray(ingredientsData) ? ingredientsData : [];
+    } catch (error) {
+      console.error("Error parsing ingredients:", error);
+      return [];
+    }
+  };
+
   const form = useForm<ProductFormData>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -1075,6 +1530,8 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       features: Array.isArray(product?.features) ? product.features : [],
       faqs: parseFaqs(product?.faqs) || [],
       customerReviews: parseCustomerReviews(product?.customerReviews) || [],
+      howToUse: parseHowToUse(product?.howToUse) || [],
+      ingredients: parseIngredients(product?.ingredients) || [],
 
       // Legacy seller fields (kept for backward compatibility)
       amazonEnabled: false,
@@ -1112,6 +1569,24 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
   } = useFieldArray({
     control: form.control,
     name: "customerReviews",
+  });
+
+  const {
+    fields: howToUseFields,
+    append: appendHowToUse,
+    remove: removeHowToUse,
+  } = useFieldArray({
+    control: form.control,
+    name: "howToUse",
+  });
+
+  const {
+    fields: ingredientFields,
+    append: appendIngredient,
+    remove: removeIngredient,
+  } = useFieldArray({
+    control: form.control,
+    name: "ingredients",
   });
 
   const productId = product?.id || "new-product";
@@ -1157,6 +1632,23 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       totalReviews: 0,
       averageRating: 0,
       topComments: [],
+    });
+  };
+
+  // Add new how to use step
+  const addHowToUse = () => {
+    appendHowToUse({
+      steps: "",
+      answer: "",
+    });
+  };
+
+  // Add new ingredient
+  const addIngredient = () => {
+    appendIngredient({
+      name: "",
+      image: "",
+      description: "",
     });
   };
 
@@ -1257,12 +1749,20 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
       const validCustomerReviews =
         data.customerReviews?.filter((review) => review.sellerName) || [];
 
+      // Filter out how to use with empty required fields
+      const validHowToUse =
+        data.howToUse?.filter((step) => step.steps && step.answer) || [];
+
+      // Filter out ingredients with empty required fields
+      const validIngredients =
+        data.ingredients?.filter((ingredient) => ingredient.name && ingredient.description) || [];
+
       const payload = {
         name: data.name,
         description: data.description,
         shortDescription: data.shortDescription,
-        price:data.price,
-        salePrice:data.salePrice,
+        price: data.price,
+        salePrice: data.salePrice,
         sellers: validSellers,
         size: data.size,
         sku: data.sku,
@@ -1279,6 +1779,8 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
         features,
         faqs: data.faqs?.filter((faq) => faq.question && faq.answer) || [],
         customerReviews: validCustomerReviews,
+        howToUse: validHowToUse,
+        ingredients: validIngredients,
       };
 
       const response = await fetch(url, {
@@ -1468,32 +1970,6 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
               </FormItem>
             )}
           />
-
-          {/* <FormField
-            control={form.control}
-            name="weight"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Weight (kg)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    step="0.1"
-                    placeholder="0.0"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value === ""
-                          ? undefined
-                          : parseFloat(e.target.value)
-                      )
-                    }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
         </div>
 
         {/* Descriptions */}
@@ -1581,6 +2057,192 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
           )}
         </div>
 
+        {/* How To Use Section */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <ClipboardList className="h-5 w-5" />
+              How To Use
+            </CardTitle>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addHowToUse}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Step
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {howToUseFields.map((field, index) => (
+                <div key={field.id} className="border p-4 rounded-lg space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium">Step #{index + 1}</h4>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeHowToUse(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name={`howToUse.${index}.steps`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Steps (e.g., step1, step2, step3)</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter step identifier (e.g., step1, step2)"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`howToUse.${index}.answer`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Instructions</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Enter detailed instructions for this step"
+                              className="min-h-[80px]"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+              ))}
+
+              {howToUseFields.length === 0 && (
+                <div className="text-center text-gray-500 py-8">
+                  <ClipboardList className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>No how-to-use steps added yet. Click "Add Step" to get started.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Ingredients Section */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <Pill className="h-5 w-5" />
+              Ingredients
+            </CardTitle>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={addIngredient}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Ingredient
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {ingredientFields.map((field, index) => (
+                <div key={field.id} className="border p-4 rounded-lg space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium">Ingredient #{index + 1}</h4>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeIngredient(index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.name`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Ingredient Name</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter ingredient name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`ingredients.${index}.image`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            <span className="flex items-center gap-2">
+                              <Image className="h-4 w-4" />
+                              Image URL (Optional)
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="https://example.com/image.jpg"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name={`ingredients.${index}.description`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Enter ingredient description and benefits"
+                            className="min-h-[80px]"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
+
+              {ingredientFields.length === 0 && (
+                <div className="text-center text-gray-500 py-8">
+                  <Pill className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>No ingredients added yet. Click "Add Ingredient" to get started.</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* 3D Model */}
         <FormField
           control={form.control}
@@ -1631,7 +2293,7 @@ export function ProductForm({ product, onSuccess }: ProductFormProps) {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name={`sellers.${index}.name`}

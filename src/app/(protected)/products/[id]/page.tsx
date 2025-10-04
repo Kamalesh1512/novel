@@ -60,6 +60,8 @@ import { CustomerReviews } from "@/components/products/product-reviews";
 import YouMayAlsoLike from "@/components/products/you-may-also-like";
 import { Product3DModel } from "@/components/global/product-3d-model";
 import { Product3DModelAnimation } from "@/components/products/product-model-animation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 
 // Icon mapping for features
 const getFeatureEmoji = (feature: string) => {
@@ -349,6 +351,7 @@ export default function ProductDetailPage() {
     return <ProductNotFound />;
   }
 
+  console.log(banners);
   return (
     <div
       className={`min-h-screen relative overflow-hidden ${
@@ -441,9 +444,9 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Key Features */}
-            <div className="space-y-8 text-center">
+            <div className="text-center">
               {product.features && (
-                <div className="flex flex-col items-center space-y-6">
+                <div className="flex flex-col items-center space-y-1">
                   {product.features
                     .filter((feature: string) => feature.trim().startsWith("*"))
                     .flatMap((feature: string) =>
@@ -465,11 +468,11 @@ export default function ProductDetailPage() {
                       []
                     )
                     .map((row: string[], rowIndex: number) => (
-                      <div key={rowIndex} className="flex justify-center gap-8">
+                      <div key={rowIndex} className="flex justify-center gap-5">
                         {row.map((featureItem: string, index: number) => (
                           <div
                             key={index}
-                            className="flex flex-row items-center space-y-2 p-4"
+                            className="flex flex-row items-center space-y-2 p-2"
                           >
                             <div className="text-3xl">
                               {getFeatureEmoji(featureItem)}
@@ -508,10 +511,25 @@ export default function ProductDetailPage() {
 
               {/* Variant Selection */}
               <div className="mb-8">
-                <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
-                  Available Variants
-                </h4>
+                {/* Title + Share button row */}
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-gray-800 flex items-center">
+                    <Sparkles className="w-5 h-5 mr-2 text-purple-600" />
+                    Available Variants
+                  </h4>
+
+                  {/* Action Button */}
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="px-6 border-2 hover:bg-gray-50"
+                    onClick={handleShare}
+                  >
+                    <Share2 className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                {/* Variants grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                   {Object.keys(sellerVariants).map((variantName, index) => {
                     const hasOffer = sellerVariants[variantName].some(
@@ -658,19 +676,6 @@ export default function ProductDetailPage() {
                 </div>
               )}
             </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 pt-6">
-              <Button
-                variant="outline"
-                size="lg"
-                className="px-6 border-2 hover:bg-gray-50"
-                onClick={handleShare}
-              >
-                <Share2 className="w-5 h-5" />
-              </Button>
-            </div>
-
             {/* Like Counter */}
             <div className="text-center text-sm text-gray-600 bg-gray-50 rounded-lg p-3">
               <Heart className="w-4 h-4 inline mr-2" />
@@ -680,16 +685,250 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* Product Description Section */}
-      {product.description && (
-        <ProductDescription
-          description={product.description}
-          productName={product.name}
-          features={product.features}
-          banners={banners}
-        />
-      )}
+      {/* Tabs Section */}
+      <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 lg:px-6 py-8 sm:py-12">
+        <h2 className="text-3xl font-bold text-green-800 mb-8 text-center">
+          "Care That Never Compromises"
+        </h2>
+        <Tabs defaultValue="ingredients" className="w-full">
+          <TabsList className="grid grid-cols-4 gap-1 mb-8 bg-gray-100 p-1 rounded-xl h-auto">
+            <TabsTrigger
+              value="ingredients"
+              className="data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg px-4 py-3 font-medium transition-all"
+            >
+              Ingredients
+            </TabsTrigger>
+            <TabsTrigger
+              value="howtouse"
+              className="data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg px-4 py-3 font-medium transition-all"
+            >
+              How to Use
+            </TabsTrigger>
+            <TabsTrigger
+              value="moredetails"
+              className="data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg px-4 py-3 font-medium transition-all"
+            >
+              More Details
+            </TabsTrigger>
+            <TabsTrigger
+              value="disclaimer"
+              className="data-[state=active]:bg-white data-[state=active]:shadow-sm rounded-lg px-4 py-3 font-medium transition-all"
+            >
+              Disclaimer
+            </TabsTrigger>
+          </TabsList>
 
+          {/* Ingredients */}
+          <TabsContent value="ingredients" className="mt-0">
+            <Card className="border-0 shadow-sm bg-gray-50">
+              <CardContent className="p-8">
+                {product.ingredients && product.ingredients.length > 0 ? (
+                  <div className="space-y-6">
+                    {product.ingredients.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        {/* Ingredient Icon/Image */}
+                        <div className="w-16 h-16 flex-shrink-0 rounded-full overflow-hidden bg-gradient-to-br from-orange-100 to-orange-50 flex items-center justify-center">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 bg-orange-200 rounded-full"></div>
+                          )}
+                        </div>
+
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-lg text-gray-800 mb-1">
+                            {item.name}
+                          </h4>
+                          <p className="text-gray-600 leading-relaxed">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 7.172V5L8 4z"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500">
+                      No ingredients information available.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* How to Use */}
+          <TabsContent value="howtouse" className="mt-0">
+            <Card className="border-0 shadow-sm bg-gray-50">
+              <CardContent className="p-8">
+                {product.howToUse && product.howToUse.length > 0 ? (
+                  <div className="space-y-4">
+                    {product.howToUse.map((step, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-start gap-4 p-4 bg-white rounded-xl shadow-sm"
+                      >
+                        <div className="w-8 h-8 bg-green-100 text-green-700 rounded-full flex items-center justify-center font-semibold text-sm flex-shrink-0">
+                          {idx + 1}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-800 mb-2">
+                            {step.steps}
+                          </h4>
+                          <p className="text-gray-600 leading-relaxed">
+                            {step.answer}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500">
+                      No usage instructions available.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* More Details */}
+          <TabsContent value="moredetails" className="mt-0">
+            <Card className="border-0 shadow-sm bg-gray-50">
+              <CardContent className="p-8">
+                {product.description ? (
+                  <ProductDescription
+                    description={product.description}
+                    productName={product.name}
+                    features={product.features}
+                    
+                  />
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <svg
+                        className="w-8 h-8 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <p className="text-gray-500">
+                      No additional details available.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Disclaimer */}
+          <TabsContent value="disclaimer" className="mt-0">
+            <Card className="border-0 shadow-sm bg-gray-50">
+              <CardContent className="p-8">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <svg
+                      className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.5c-.77-.833-2.694-.833-3.464 0L3.35 16.5c-.77.833.192 2.5 1.732 2.5z"
+                      />
+                    </svg>
+                    <div>
+                      <h4 className="font-semibold text-amber-800 mb-2">
+                        Important Notice
+                      </h4>
+                      <p className="text-amber-700 text-sm leading-relaxed">
+                        This product has not been evaluated by the FDA. It is
+                        not intended to diagnose, treat, cure, or prevent any
+                        disease. Please consult with a healthcare professional
+                        before use if you have any medical conditions or
+                        concerns.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-white rounded-xl shadow-sm">
+                    <h4 className="font-semibold text-gray-800 mb-3">
+                      Usage Guidelines
+                    </h4>
+                    <ul className="space-y-2 text-gray-600 text-sm">
+                      <li className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
+                        For external use only
+                      </li>
+                      {/* <li className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
+                        Avoid contact with eyes
+                      </li> */}
+                      <li className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
+                        Discontinue use if irritation occurs
+                      </li>
+                      {/* <li className="flex items-start gap-2">
+                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
+                        Keep out of reach of children
+                      </li> */}
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
       <Product3DModelAnimation
         modelUrl={product.modelUrl || ""}
         fallbackImage={product.images[0] || ""}
@@ -706,14 +945,13 @@ export default function ProductDetailPage() {
 
       <FAQs faqs={product.faqs} />
 
+      <ProductBanners banners={banners} />
+
       {product.customerReviews && (
         <CustomerReviews customerReviews={product.customerReviews} />
       )}
 
       <YouMayAlsoLike products={youMayAlsoLike} />
-
-      {/* Related Products Section */}
-      <RelatedProducts relatedProducts={relatedProducts} />
 
       <style jsx>{`
         @keyframes slideInUp {

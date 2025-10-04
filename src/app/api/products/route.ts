@@ -1,15 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { products, categories } from "@/lib/db/schema";
-import {
-  eq,
-  like,
-  and,
-  desc,
-  asc,
-  sql,
-  inArray,
-} from "drizzle-orm";
+import { eq, like, and, desc, asc, sql, inArray } from "drizzle-orm";
 
 const sortableFields = {
   name: products.name,
@@ -51,8 +43,8 @@ export async function GET(request: NextRequest) {
         name: products.name,
         shortDescription: products.shortDescription,
         description: products.description,
-        price:products.price,
-        salePrice:products.salePrice,
+        price: products.price,
+        salePrice: products.salePrice,
         images: products.images,
         modelUrl: products.modelUrl,
         stock: products.stock,
@@ -75,7 +67,9 @@ export async function GET(request: NextRequest) {
           createdAt: categories.createdAt,
           updatedAt: categories.updatedAt,
         },
-        faqs:products.faqs
+        faqs: products.faqs,
+        howToUse: products.howToUse,
+        ingredients: products.ingredients,
       })
       .from(products)
       .leftJoin(categories, eq(products.categoryId, categories.id))
@@ -117,4 +111,3 @@ export async function GET(request: NextRequest) {
     );
   }
 }
-

@@ -77,13 +77,6 @@ export const ViewModeToggle = ({
           3D View
         </Button>
       </div>
-
-      {/* Mode indicator */}
-      <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2">
-        <div className="text-xs text-gray-500 text-center">
-          {viewMode === "3d" ? "Interactive 3D Model" : "Product Gallery"}
-        </div>
-      </div>
     </motion.div>
   );
 };

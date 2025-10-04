@@ -11,7 +11,7 @@ interface ProductDescriptionProps {
   description: string;
   productName: string;
   features?: string[];
-  banners: BannerProps[];
+  banners?: BannerProps[];
 }
 
 export default function ProductDescription({
@@ -164,12 +164,12 @@ export default function ProductDescription({
             </div>
           )}
 
-          {/* Banners */}
+          {/* Banners
           {isExpanded && banners.length > 0 && (
             <div className="mt-6">
               <ProductBanners banners={banners} />
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </div>

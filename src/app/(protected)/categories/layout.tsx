@@ -7,8 +7,10 @@ import { useUser } from "@/components/user/user-provider";
 import { UserSidebar } from "@/components/user/user-sidebar";
 import { useSession } from "next-auth/react";
 import Footer from "@/components/layout/footer";
-import { Header } from "@/components/layout/header";
 import { LoadingScreen } from "@/components/global/loading";
+import { CategoryHeader } from "@/components/categories/category-header";
+import { AnimatePresence,motion } from "framer-motion";
+import WhatsAppButton from "@/components/global/interactive/whatsAppbutton";
 
 export default function CategoryLayout({
   children,
@@ -27,7 +29,7 @@ export default function CategoryLayout({
   }, [status, router]);
 
   if (status === "loading") {
-    return <LoadingScreen description="products"/>;
+    return <LoadingScreen description="products" />;
   }
 
   if (!session?.user) {
@@ -37,11 +39,25 @@ export default function CategoryLayout({
   return (
     <div className="bg-transparent flex flex-col min-h-screen">
       <div>
-        <Header isHome={false}/>
-        <main className="">{children}</main>
-        <Footer/>
+        <CategoryHeader isHome={false} />
+        <main className="">
+          {children}
+          <div>
+            <AnimatePresence>
+              <motion.div
+                className="fixed bottom-6 right-6 z-50 flex flex-col gap-3"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 2, duration: 0.5 }}
+              >
+                {/* WhatsApp Button */}
+                <WhatsAppButton />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </main>
+        <Footer />
       </div>
     </div>
-
   );
 }

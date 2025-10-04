@@ -24,6 +24,7 @@ import {
   UserCog,
   Users,
 } from "lucide-react";
+import { StringDecoder } from "string_decoder";
 
 export const userNavigation = [
   {
@@ -168,6 +169,19 @@ export interface faqs {
   answer:string
 }
 
+export interface howToUse{
+  steps:string  // step1 , step2 , step3
+  answer:string
+}
+
+export interface ingredients{
+  name:string,
+  image:string,
+  description:string
+}
+
+
+
 export interface ProductType {
   id: string;
   name: string;
@@ -199,7 +213,9 @@ export interface ProductType {
   }[];
   weight?: number;
   customerReviews: CustomerReviewsType[] | null;
-  faqs:faqs[]
+  faqs:faqs[],
+  howToUse:howToUse[],
+  ingredients:ingredients[]
 }
 
 export interface Category {
@@ -323,6 +339,7 @@ export interface NavSubItem {
 
 export interface NavItem {
   title: string;
+  mainRoute?:string
   hasDropdown: boolean;
   items?: NavSubItem[];
 }
@@ -342,6 +359,7 @@ export const navigationItems: NavItem[] = [
   },
   {
     title: "Baby Care",
+    mainRoute:"/categories/baby-care",
     hasDropdown: true,
     items: [
       { title: "Baby Wipes", href: "/baby-care/babywipes" },
@@ -352,6 +370,7 @@ export const navigationItems: NavItem[] = [
   },
   {
     title: "Outdoor Gear",
+    mainRoute:"/categories/outdoor-gear",
     hasDropdown: true,
     items: [
       { title: "Strollers", href: "/outdoor-gear/strollers" },
@@ -362,6 +381,7 @@ export const navigationItems: NavItem[] = [
   },
   {
     title: "Indoor Gear",
+    mainRoute:"/categories/indoor-gear",
     hasDropdown: true,
     items: [
       { title: "Baby High Chairs", href: "/indoor-gear/babyhighchairs" },
@@ -371,12 +391,13 @@ export const navigationItems: NavItem[] = [
   },
   {
     title: "Nursing & Feeding Essentials",
+    mainRoute:"/categories/nursing-feeding",
     hasDropdown: true,
     items: [
       { title: "Feeding Bottles", href: "/nursing-feeding/feedingbottles" },
       { title: "Baby Bibs", href: "/nursing-feeding/babybibs" },
       {
-        title: "Other Baby Essentials",
+        title: "Other Essentials",
         href: "/nursing-feeding/otheressentials",
       },
     ],
@@ -384,6 +405,7 @@ export const navigationItems: NavItem[] = [
   {
     title: "Adult Care",
     hasDropdown: true,
+    mainRoute:"/categories/adult-care",
     items: [
       { title: "Underpads", href: "/adult-care/underpads" },
       { title: "Adult Diapers", href: "/adult-care/adultdiapers" },
@@ -393,6 +415,7 @@ export const navigationItems: NavItem[] = [
   {
     title: "Personal Care",
     hasDropdown: true,
+    mainRoute:"/categories/personal-care/",
     items: [
       { title: "Face Tissues", href: "/personal-care/facetissues" },
       { title: "Refreshing Wipes", href: "/personal-care/refreshingwipes" },
