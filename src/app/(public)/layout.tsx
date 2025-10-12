@@ -16,7 +16,7 @@ export default function PublicLayout({
     <div>
       <div>
         <Header isHome={false} />
-        <main className="">
+        <main className="m-0 p-0">
           {children}
           <div>
             <AnimatePresence>

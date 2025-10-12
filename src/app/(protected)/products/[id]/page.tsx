@@ -1,6 +1,6 @@
 //products/[id]/page.tsx
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -128,6 +128,65 @@ const getFeatureEmoji = (feature: string) => {
   return "✨";
 };
 
+const VARIANT_OPTIONS = [
+  "Pack of 1",
+  "Pack of 2",
+  "Pack of 3",
+  "Pack of 4",
+  "Pack of 5",
+  "Pack of 6",
+  "Pack of 8",
+  "Pack of 10",
+  "Pack of 12",
+  "Single Unit",
+  "Bulk Pack",
+  "Small",
+  "Medium",
+  "Large",
+  "XL",
+];
+
+// Helper function to convert variant name to filename suffix
+const getVariantSuffix = (variant: string): string => {
+  if (variant === "Single Unit") {
+    return ""; // No suffix for Single Unit
+  }
+
+  // Convert variant name to lowercase and replace spaces with underscores
+  return variant.toLowerCase().replace(/\s+/g, "_");
+};
+
+// Helper function to filter images by variant
+const filterImagesByVariant = (
+  images: string[],
+  selectedVariant: string | null
+): string[] => {
+  if (!selectedVariant) {
+    return images;
+  }
+
+  const suffix = getVariantSuffix(selectedVariant);
+
+  // If Single Unit, return images without variant suffixes
+  if (suffix === "") {
+    return images.filter((img) => {
+      const filename = img.split("/").pop()?.toLowerCase() || "";
+      // Check if image doesn't have any variant suffix
+      return !VARIANT_OPTIONS.some((variant) => {
+        if (variant === "Single Unit") return false;
+        const variantSuffix = getVariantSuffix(variant);
+        return filename.includes(variantSuffix);
+      });
+    });
+  }
+
+  // Filter images that contain the variant suffix
+  return images.filter((img) => {
+    const filename = img.split("/").pop()?.toLowerCase() || "";
+    return filename.includes(suffix);
+  });
+};
+
 export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0);
   const [viewMode, setViewMode] = useState<"image" | "3d">("image");
@@ -171,6 +230,13 @@ export default function ProductDetailPage() {
       return acc;
     }, {} as { [variant: string]: { name: string; url: string; offer: string }[] }) ||
     {};
+
+  const filteredImages = useMemo(() => {
+    if (!product) return [];
+
+    const selectedVariant = selectedVariants.selectedVariant;
+    return filterImagesByVariant(product.images, selectedVariant);
+  }, [product?.images, selectedVariants.selectedVariant]);
 
   const fetchProductAndBanners = async () => {
     // Early return if prerequisites not met
@@ -347,11 +413,14 @@ export default function ProductDetailPage() {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  useEffect(() => {
+    setSelectedImage(0); // Reset to first image when variant changes
+  }, [selectedVariants.selectedVariant]);
+
   if (!product) {
     return <ProductNotFound />;
   }
 
-  console.log(banners);
   return (
     <div
       className={`min-h-screen relative overflow-hidden ${
@@ -400,12 +469,15 @@ export default function ProductDetailPage() {
               <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden shadow-lg">
                 {viewMode === "image" ? (
                   <ProductImageGallery
-                    images={product.images}
+                    images={
+                      filteredImages.length > 0
+                        ? filteredImages
+                        : product.images
+                    }
                     productName={product.name}
                     selectedImage={selectedImage}
                     onImageSelect={setSelectedImage}
                     viewMode="image"
-                    // className="min-h-[400px] md:min-h-[500px]"
                   />
                 ) : (
                   <div className="aspect-square w-full min-h-[400px] md:min-h-[500px]">
@@ -437,7 +509,7 @@ export default function ProductDetailPage() {
             {/* Product Header */}
             <div className="space-y-4">
               <div className="flex items-center justify-between text-center">
-                <h1 className="text-2xl md:text-4xl font-bold text-gray-900 ">
+                <h1 className="text-2xl md:text-4xl font-bold text-gray-900 font-sans">
                   {product.name}
                 </h1>
               </div>
@@ -446,33 +518,36 @@ export default function ProductDetailPage() {
             {/* Key Features */}
             <div className="text-center">
               {product.features && (
-                <div className="flex flex-col items-center space-y-1">
-                  {product.features
-                    .filter((feature: string) => feature.trim().startsWith("*"))
-                    .flatMap((feature: string) =>
-                      feature
-                        .substring(1)
-                        .split(",")
-                        .map((f) => f.trim())
-                    )
-                    .reduce(
-                      (rows: string[][], feature: string, index: number) => {
-                        // Pyramid shape logic
-                        const rowIndex = Math.floor(
-                          (Math.sqrt(8 * index + 1) - 1) / 2
-                        );
-                        if (!rows[rowIndex]) rows[rowIndex] = [];
-                        rows[rowIndex].push(feature);
-                        return rows;
-                      },
-                      []
-                    )
-                    .map((row: string[], rowIndex: number) => (
-                      <div key={rowIndex} className="flex justify-center gap-5">
+                <div className="flex flex-col items-center space-y-2">
+                  {(() => {
+                    const features = product.features
+                      .filter((feature: string) =>
+                        feature.trim().startsWith("*")
+                      )
+                      .flatMap((feature: string) =>
+                        feature
+                          .substring(1)
+                          .split(",")
+                          .map((f) => f.trim())
+                      );
+
+                    // Split into pairs of 2
+                    const rows: string[][] = [];
+                    for (let i = 0; i < features.length; i += 2) {
+                      rows.push(features.slice(i, i + 2));
+                    }
+
+                    return rows.map((row: string[], rowIndex: number) => (
+                      <div
+                        key={rowIndex}
+                        className={`flex justify-center gap-3 ${
+                          row.length === 1 ? "justify-center" : ""
+                        }`}
+                      >
                         {row.map((featureItem: string, index: number) => (
                           <div
                             key={index}
-                            className="flex flex-row items-center space-y-2 p-2"
+                            className="flex items-center space-x-2 p-1"
                           >
                             <div className="text-3xl">
                               {getFeatureEmoji(featureItem)}
@@ -483,7 +558,8 @@ export default function ProductDetailPage() {
                           </div>
                         ))}
                       </div>
-                    ))}
+                    ));
+                  })()}
                 </div>
               )}
             </div>
@@ -839,7 +915,6 @@ export default function ProductDetailPage() {
                     description={product.description}
                     productName={product.name}
                     features={product.features}
-                    
                   />
                 ) : (
                   <div className="text-center py-12">
@@ -909,18 +984,11 @@ export default function ProductDetailPage() {
                         <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
                         For external use only
                       </li>
-                      {/* <li className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
-                        Avoid contact with eyes
-                      </li> */}
+
                       <li className="flex items-start gap-2">
                         <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
                         Discontinue use if irritation occurs
                       </li>
-                      {/* <li className="flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 bg-gray-400 rounded-full flex-shrink-0 mt-2"></span>
-                        Keep out of reach of children
-                      </li> */}
                     </ul>
                   </div>
                 </div>
@@ -939,8 +1007,6 @@ export default function ProductDetailPage() {
           height: '10.8 cm (4.25")',
         }}
         className="w-full h-96"
-        autoRotate={false}
-        altText="Your product 3D model"
       />
 
       <FAQs faqs={product.faqs} />

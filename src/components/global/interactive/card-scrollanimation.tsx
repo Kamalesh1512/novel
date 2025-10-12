@@ -1,107 +1,59 @@
-'use client'
-import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useSpring,
-  useInView,
-  AnimatePresence,
-  useMotionValue,
-  useVelocity,
-} from "framer-motion";
-import { TiltCard } from "./tiltcard";
-import { Card, CardContent } from "@/components/ui/card";
+"use client";
 
-// Enhanced Why Choose Card with scroll animations
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
+
 interface CardScrollAnimationProps {
   reason: {
-    text: string;
-    icon: React.ComponentType<any>;
+    title: string;
+    subtitle?: string;
+    description: string;
+    image: string;
+    reverse?: boolean;
   };
   index: number;
-  scrollYProgress: any;
 }
 
 export const CardScrollAnimation = ({
   reason,
   index,
-  scrollYProgress,
 }: CardScrollAnimationProps) => {
-  const isEven = index % 2 === 0;
-
-  // Create scroll-based animations for each card
-  const cardRef = useRef(null);
-  const { scrollYProgress: cardScrollProgress } = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Different animation ranges for each card
-  const startPos = isEven ? -300 : 300
-  const endPos = isEven ? 300 : -300;
-
-  const x = useTransform(
-    cardScrollProgress,
-    [0, 0.3, 0.7, 1],
-    [startPos, 0, 0, endPos]
-  );
-
-  const opacity = useTransform(
-    cardScrollProgress,
-    [0, 0.2, 0.8, 1],
-    [0, 1, 1, 0]
-  );
-  const scale = useTransform(
-    cardScrollProgress,
-    [0, 0.2, 0.8, 1],
-    [0.8, 1, 1, 0.8]
-  );
-  const rotate = useTransform(
-    cardScrollProgress,
-    [0, 0.2, 0.8, 1],
-    [isEven ? -15 : 15, 0, 0, isEven ? 15 : -15]
-  );
-
   return (
-    <motion.div
-      ref={cardRef}
-      style={{ x, opacity, scale, rotate }}
-      className={`flex ${isEven ? "justify-start" : "justify-end"}`}
-    >
-      <TiltCard className="max-w-2xl">
-        <Card className="bg-gradient-to-r from-green-100 to-emerald-100 border-green-200 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 overflow-hidden">
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-emerald-400/10"
-            animate={{
-              background: [
-                "linear-gradient(45deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%)",
-                "linear-gradient(225deg, rgba(16, 185, 129, 0.1) 0%, rgba(34, 197, 94, 0.1) 100%)",
-                "linear-gradient(45deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%)",
-              ],
-            }}
-            transition={{ duration: 4, repeat: Infinity }}
-          />
-          <CardContent className="p-8 relative z-10">
-            <div className="flex items-start space-x-4">
-              <motion.div
-                className="bg-green-200 p-3 rounded-full"
-                whileHover={{
-                  scale: 1.2,
-                  rotate: 360,
-                  backgroundColor: "rgb(187 247 208)", // green-300
-                }}
-                transition={{ duration: 0.5 }}
-              >
-                <reason.icon className="w-6 h-6 text-green-700" />
-              </motion.div>
-              <p className="text-gray-700 leading-relaxed flex-1">
-                {reason.text}
+    <motion.div className="flex justify-center my-10 px-4 sm:px-8 lg:px-12">
+      <Card className="max-w-6xl w-full rounded-none border-none overflow-hidden">
+        <div
+          className={`flex flex-col md:flex-row items-center ${
+            reason.reverse ? "md:flex-row-reverse" : ""
+          }`}
+        >
+          {/* Image Section */}
+          <div className="relative w-full md:w-[320px] aspect-square flex-shrink-0">
+            <Image
+              src={reason.image}
+              alt={reason.title}
+              fill
+              className="object-cover rounded-none md:rounded-3xl"
+            />
+          </div>
+
+          {/* Text Section */}
+          <div className="bg-green-400 text-white flex flex-col justify-center p-6 sm:p-7 md:p-8 space-y-2.5 max-h-[60%]">
+            <h3 className="text-lg font-bold leading-tight">{reason.title}</h3>
+
+            {reason.subtitle && (
+              <p className="text-sm sm:text-base font-medium border-t border-white/30 pt-2.5 mt-1">
+                {reason.subtitle}
               </p>
-            </div>
-          </CardContent>
-        </Card>
-      </TiltCard>
+            )}
+
+            <p className="text-xs sm:text-sm leading-relaxed text-white/95">
+              {reason.description}
+            </p>
+          </div>
+        </div>
+      </Card>
     </motion.div>
   );
 };

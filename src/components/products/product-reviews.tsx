@@ -79,7 +79,7 @@ export const CustomerReviews: React.FC<CustomerReviewsProps> = ({
   // If no reviews available, show placeholder
   if (allReviews.length === 0) {
     return (
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-16 bg-gray-50">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-16">
         <div className="text-center">
           <ShoppingBag className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-600 mb-2">
@@ -114,7 +114,7 @@ export const CustomerReviews: React.FC<CustomerReviewsProps> = ({
       : 0;
 
   return (
-    <div className="max-w-4xl mx-auto py-12 bg-transparent">
+    <div className="max-w-7xl mx-auto py-12 bg-transparent">
       <div className="relative overflow-hidden">
         <h2 className="text-3xl font-bold text-green-800 mb-8 text-center">
           What Our Customers Says!

@@ -17,6 +17,7 @@ import CategoriesGrid from "@/components/home/categories-grid";
 import LogoSlider from "@/components/home/sellers-logo-slider";
 import { AnimatePresence, motion } from "framer-motion";
 import WhatsAppButton from "@/components/global/interactive/whatsAppbutton";
+import VideoCarousel from "@/components/home/video-carousel";
 
 export default function Home() {
   const { setProducts, getAllProducts } = useProductStore();
@@ -67,6 +68,7 @@ export default function Home() {
       <StealDeals products={stealDeals} />
       <Testimonials />
       <LogoSlider />
+      <VideoCarousel/>
       <Footer />
 
       <div>

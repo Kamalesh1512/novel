@@ -149,6 +149,39 @@ export const banners = pgTable("banners", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const video = pgTable("video", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  linkUrl: varchar("link_url", { length: 500 }),
+  videoUrl: varchar("video_url", { length: 500 }).notNull(),
+  videoType: varchar("video_type", { length: 50 }).default("general").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  priority: integer("priority").default(0).notNull(),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+
+  // Video playback settings
+  autoPlay: boolean("auto_play").default(false).notNull(),
+  loop: boolean("loop").default(true).notNull(),
+  muted: boolean("muted").default(true).notNull(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const miscellaneous = pgTable("miscellaneous", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(), // HTML content
+  isActive: boolean("is_active").default(true).notNull(),
+  priority: integer("priority").default(0).notNull(),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Visits table for tracking
 export const visits = pgTable("visits", {
   id: uuid("id").primaryKey().defaultRandom(),

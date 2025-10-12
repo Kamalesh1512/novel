@@ -9,6 +9,7 @@ import {
   Heart,
   HelpCircle,
   LayoutDashboard,
+  LucideAlignCenter,
   MapPin,
   Newspaper,
   Package,
@@ -23,6 +24,7 @@ import {
   User,
   UserCog,
   Users,
+  VideoIcon,
 } from "lucide-react";
 import { StringDecoder } from "string_decoder";
 
@@ -324,12 +326,14 @@ export const adminNavigation = [
   { name: "Admin Users", href: "/admin/admin-users", icon: User },
   { name: "Banners", href: "/admin/banners", icon: LayoutDashboard },
   { name: "Categories", href: "/admin/categories", icon: Tag },
-  // { name: "Coupons", href: "/admin/coupons", icon: Gift },
   { name: "Customers", href: "/admin/customers", icon: Users },
   { name: "Blogs", href: "/admin/blogs", icon: Newspaper },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Reviews", href: "/admin/reviews", icon: Star },
   { name: "Settings", href: "/admin/settings", icon: UserCog },
+  { name: "Videos", href: "/admin/videos", icon: VideoIcon },
+  { name: "Miscellaneous", href: "/admin/miscellaneous", icon: LucideAlignCenter },
+
 ];
 
 export interface NavSubItem {
@@ -347,6 +351,7 @@ export interface NavItem {
 export const navigationItems: NavItem[] = [
   {
     title: "All Categories",
+    mainRoute:"/categories",
     hasDropdown: true,
     items: [
       { title: "Baby Care", href: "/baby-care" },

@@ -74,7 +74,7 @@ const Bestsellers = ({ baseProducts }: BestsellersProps) => {
                 aria-label="Previous slide"
               >
                 <ChevronLeft
-                  size={96}
+                  size={72}
                   strokeWidth={0.5}
                   className="text-black"
                 />
@@ -110,7 +110,7 @@ const Bestsellers = ({ baseProducts }: BestsellersProps) => {
                 aria-label="Next slide"
               >
                 <ChevronRight
-                  size={96}
+                  size={72}
                   strokeWidth={0.5}
                   className="text-black"
                 />

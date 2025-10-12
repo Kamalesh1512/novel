@@ -4,6 +4,7 @@ import { DealProductCard } from "../products/deal-product-card";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { SectionHeading } from "../ui/section-heading";
 
 interface StealDealsProps {
   products: ProductType[];
@@ -139,21 +140,15 @@ const StealDeals: React.FC<StealDealsProps> = ({ products = [] }) => {
   return (
     <section
       id="steal-deals-section"
-      className="py-12 md:py-20 relative overflow-hidden"
+      className="py-8 md:py-14 relative overflow-hidden"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header */}
-        <div
-          className={`text-center mb-12 transition-all duration-1000 ${
-            sectionInView
-              ? "translate-y-0 opacity-100"
-              : "translate-y-10 opacity-0"
-          }`}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-green-900">
+        <div className="text-center mb-10 transition-all duration-1000 translate-y-0 opacity-100">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold font-sans text-green-700 mb-2">
             Steal Deals
           </h2>
-          <p className="text-lg text-gray-700">
+          <p className="text-sm md:text-lg text-gray-700 text-center">
             🔥 Limited Time Offers • Grab Before They're Gone! 🔥
           </p>
         </div>

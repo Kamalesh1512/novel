@@ -14,6 +14,7 @@ import {
   ShoppingBagIcon,
   Settings,
   LogOut,
+  Megaphone,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -118,8 +119,9 @@ export function Header({ isHome }: HeaderProps) {
     });
 
     router.push(`/products?${searchParams.toString()}`);
-    setIsSearchOpen(false); // Close mobile search if open
+    setIsSearchOpen(false);
   };
+
   // Animation variants
   const headerVariants = {
     initial: { y: -100, opacity: 0 },
@@ -183,6 +185,28 @@ export function Header({ isHome }: HeaderProps) {
       animate="animate"
       style={{ position: "relative" }}
     >
+      {/* Offer Bar */}
+      <Link
+        href="https://www.amazon.in/stores/Novel/page/35B22A4E-F965-471F-8E6F-2F26AC11B222?lp_asin=B09GP8BLSM&ref_=ast_bln&store_ref=bl_ast_dp_brandLogo_sto" // Replace with your actual URL
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block"
+      >
+        <div className="bg-gradient-to-r from-red-600 to-red-700 text-white cursor-pointer">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-center h-8 gap-2">
+              <Megaphone className="h-4 w-4 animate-pulse" />
+              <p className="text-sm font-medium text-center">
+                <span className="hidden sm:inline">
+                  🎉 Great Diwali Festival Sale:{" "}
+                </span>
+                Get 20% off on all products!
+              </p>
+            </div>
+          </div>
+        </div>
+      </Link>
+
       {/* Top Navigation Bar */}
       <div className="bg-transparent border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -1,3 +1,4 @@
+// api/admin/banners
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db'; // Your database instance
 import { desc, eq } from 'drizzle-orm';

@@ -41,7 +41,7 @@ export const mainCategories = [
 
 export default function CategoriesGrid() {
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-20 my-8 md:my-12">
+    <section className="max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-20 my-8 md:my-20">
       <SectionHeading
         title="Shop by Category"
         fontStyle="font-sans"
@@ -49,7 +49,7 @@ export default function CategoriesGrid() {
         size="lg"
       />
 
-      <div className="py-8">
+      <div className="py-2">
         {/* Desktop grid */}
         <div className="hidden md:grid grid-cols-12 gap-8 auto-rows-[200px]">
           {/* Left column */}

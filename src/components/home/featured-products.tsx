@@ -37,34 +37,31 @@ export function FeaturedProducts({ products }: FeaturedProductsProps) {
   };
 
   return (
-    <section className="w-full relative">
+    <section className="w-full relative my-8 md:my-20">
       {/* Carousel Container */}
       <div className="relative overflow-hidden">
         {/* Large padding on sides */}
-
-        <div className="flex flex-row items-center max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
-          <div className="flex-1 text-green-700">
-            <SectionHeading
-              title="Our Bestsellers"
-              fontStyle="font-sans"
-              align="left"
-              size="md"
-              description="Shop top-selling Babio baby care essentials. Trusted by
-            moms, our bestsellers provide natural, gentle care for your little
-            one."
-            />
-          </div>
-
-          <div className="flex-shrink-0">
+        <div className="max-w-7xl mx-auto px-8 sm:px-12 lg:px-20">
+          {/* Row 1: Title + Button */}
+          <div className="flex flex-row justify-between items-center">
+            <h2 className="text-xl lg:text-3xl font-bold text-green-700 font-sans">
+              Our Bestsellers
+            </h2>
             <Button
               variant="outline"
               size="lg"
-              className="text-green-600 border border-green-500 hover:bg-green-600"
+              className="text-green-600 border border-green-500 hover:bg-green-600 hover:text-white"
               asChild
             >
               <Link href="/products">View All</Link>
             </Button>
           </div>
+
+          {/* Row 2: Description */}
+          <p className="mt-2 text-gray-600 text-base md:text-lg">
+            Shop top-selling Novel's Babio baby care essentials. Trusted by moms, our
+            bestsellers provide natural, gentle care for your little one.
+          </p>
         </div>
 
         {/* Products Carousel */}
